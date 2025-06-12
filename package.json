@@ -1,0 +1,9 @@
+{
+  "name": "project-aegis-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The monorepo for Project Aegis.",
+  "keywords": [],
+  "author": "Marius Stander",
+  "license": "ISC"
+}
