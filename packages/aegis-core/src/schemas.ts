@@ -71,3 +71,25 @@ export const GenerateAdCopyInputSchema = z.object({
   productDescription: z.string().describe("A brief description of the product, its features, and target audience."),
   targetPlatform: z.enum(['Facebook', 'Google Ads', 'Twitter', 'Instagram']).describe("The advertising platform for which to tailor the copy."),
 });
+/**
+ * Input schema for Fornax's tool to process orders.
+ * This schema defines the structure of the input data required to process an order.
+ */
+export const ProcessOrderInputSchema = z.object({
+  productName: z.string().describe("The name of the product that was ordered."),
+  productSku: z.string().describe("The unique SKU of the product."),
+  // CORRECTED: .gte(1) is functionally the same for an integer and is compatible with the Google API.
+  quantity: z.number().int().gte(1).describe("The number of units ordered."), 
+  customerName: z.string().describe("The full name of the customer."),
+  shippingAddress: z.string().describe("The complete shipping address for the customer."),
+});
+
+/**
+ * Input schema for Corvus's tool to send a shipping confirmation email.
+ */
+export const SendShippingConfirmationEmailInputSchema = z.object({
+  customerName: z.string().describe("The first name of the customer."),
+  customerEmail: z.string().describe("The email address of the customer."), // CORRECTED: Removed the incompatible .email() validator.
+  orderId: z.string().describe("The unique ID of the customer's order."),
+  trackingNumber: z.string().describe("The shipping carrier's tracking number for the order."),
+});
