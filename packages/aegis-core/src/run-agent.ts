@@ -9,34 +9,44 @@ import { stdin as input, stdout as output } from 'node:process';
 
 async function delegateTaskNode(state: AgentState): Promise<Partial<AgentState>> {
   console.log('\n--- DELEGATION NODE ---');
-  const { tasks } = state;
-  const readyTaskIndex = tasks.findIndex(t => {
+  let { tasks } = state;
+
+  // --- CASCADING FAILURE LOGIC ---
+  const tasksWithCascadedFailures = tasks.map(task => {
+    if (task.status === 'pending' && task.dependencies?.some(depId => tasks.find(t => t.id === depId)?.status === 'failed')) {
+      console.log(`Janus: Task "${task.description}" is being marked as failed due to a failed dependency.`);
+      return { ...task, status: 'failed' as const };
+    }
+    return task;
+  });
+  
+  // Use the updated list for the rest of the logic.
+  const currentTasks = tasksWithCascadedFailures;
+
+  const readyTaskIndex = currentTasks.findIndex(t => {
     if (t.status !== 'pending') return false;
     if (!t.dependencies || t.dependencies.length === 0) return true;
-    return t.dependencies.every(depId => tasks.find(dep => dep.id === depId)?.status === 'completed');
+    return t.dependencies.every(depId => currentTasks.find(dep => dep.id === depId)?.status === 'completed');
   });
 
   if (readyTaskIndex === -1) {
-    console.log('Janus: No pending tasks. Work complete.');
-    return { humanApprovalNeeded: false };
+    console.log('Janus: No actionable pending tasks. Work complete or blocked.');
+    // DEFINITIVE FIX: Return the updated task list to persist the cascaded failures.
+    return { tasks: currentTasks, humanApprovalNeeded: false };
   }
 
-  const currentTask = { ...tasks[readyTaskIndex] };
+  const currentTask = { ...currentTasks[readyTaskIndex] };
   console.log(`Janus: Executing: "${currentTask.description}" for agent ${currentTask.agent}.`);
 
   let agentOutput: any;
   let agentInput = { input: currentTask.input, chat_history: [] };
 
+  // This logic is now correct because we handle the 'no' case above.
   if (currentTask.agent === 'Corvus') {
-    const fornaxTask = state.tasks.find(t => t.id === currentTask.dependencies![0]);
+    const fornaxTask = currentTasks.find(t => t.id === currentTask.dependencies![0]);
     const fornaxToolOutput = fornaxTask!.output!.toolOutput as string;
     const fornaxOutput = JSON.parse(fornaxToolOutput);
-    
-    const corvusInputPayload = {
-      ...currentTask.input,
-      orderId: fornaxOutput.orderId,
-      trackingNumber: fornaxOutput.trackingNumber,
-    };
+    const corvusInputPayload = { ...currentTask.input, orderId: fornaxOutput.orderId, trackingNumber: fornaxOutput.trackingNumber };
     agentInput = { input: corvusInputPayload, chat_history: [] };
     agentOutput = await corvusExecutor.invoke(agentInput);
   } else if (currentTask.agent === 'Lyra') {
@@ -49,21 +59,15 @@ async function delegateTaskNode(state: AgentState): Promise<Partial<AgentState>>
     agentOutput = { output: "No action taken." };
   }
 
-  currentTask.status = 'awaiting_human_approval';
-  
-  // DEFINITIVE FIX 2: Access the tool output from the 'intermediateSteps' array.
+  currentTask.status = 'awaiting_human_approval'; 
   const toolOutput = agentOutput.intermediateSteps?.[0]?.observation ?? null;
-
-  currentTask.output = { 
-    agentResponse: agentOutput.output,
-    toolOutput: toolOutput,
-  };
+  currentTask.output = { agentResponse: agentOutput.output, toolOutput };
   
-  const newTasks = [...tasks];
-  newTasks[readyTaskIndex] = currentTask;
+  const finalTasks = [...currentTasks];
+  finalTasks[readyTaskIndex] = currentTask;
 
   return {
-    tasks: newTasks,
+    tasks: finalTasks,
     humanApprovalNeeded: true, 
     systemMessages: [`Janus: Task "${currentTask.id}" executed. Awaiting approval.`],
   };
