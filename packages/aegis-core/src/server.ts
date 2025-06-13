@@ -55,71 +55,107 @@ function broadcast(message: object) {
 
 // --- AGENT GRAPH LOGIC ---
 // (Node functions delegateTaskNode, humanApprovalGateNode, and routeTasks are unchanged and correct)
+
 async function delegateTaskNode(state: AgentState, config: { configurable: { runId: string } }): Promise<Partial<AgentState>> {
   const workflowId = config.configurable.runId;
   broadcast({ type: 'log', workflowId, message: `--- DELEGATION NODE ---` });
   
   let { tasks } = state;
+  
   const tasksWithCascadedFailures = tasks.map(task => {
-      if (task.status === 'pending' && task.dependencies?.some(depId => tasks.find(t => t.id === depId)?.status === 'failed')) {
-        const logMsg = `Janus: Task "${task.description}" is being marked as failed due to a failed dependency.`;
-        console.log(logMsg);
-        broadcast({ type: 'log', workflowId, message: logMsg });
-        return { ...task, status: 'failed' as const };
-      }
-      return task;
+    if (task.status === 'pending' && task.dependencies?.some(depId => tasks.find(t => t.id === depId)?.status === 'failed')) {
+      const logMsg = `Janus: Task "${task.description}" is being marked as failed due to a failed dependency.`;
+      console.log(logMsg);
+      broadcast({ type: 'log', workflowId, message: logMsg });
+      return { ...task, status: 'failed' as const };
+    }
+    return task;
   });
   tasks = tasksWithCascadedFailures;
 
   const readyTaskIndex = tasks.findIndex(t => {
-      if (t.status !== 'pending') return false;
-      if (!t.dependencies || t.dependencies.length === 0) return true;
-      return t.dependencies.every(depId => tasks.find(dep => dep.id === depId)?.status === 'completed');
+    if (t.status !== 'pending') return false;
+    if (!t.dependencies || t.dependencies.length === 0) return true;
+    return t.dependencies.every(depId => tasks.find(dep => dep.id === depId)?.status === 'completed');
   });
 
   if (readyTaskIndex === -1) {
-      const logMsg = 'Janus: No actionable pending tasks. Work complete or blocked.';
-      console.log(logMsg);
-      broadcast({ type: 'log', workflowId, message: logMsg });
-      return { tasks, humanApprovalNeeded: false };
+    const logMsg = 'Janus: No actionable pending tasks. Work complete or blocked.';
+    console.log(logMsg);
+    broadcast({ type: 'log', workflowId, message: logMsg });
+    return { tasks, humanApprovalNeeded: false };
   }
 
   const currentTask = { ...tasks[readyTaskIndex] };
-  const logMsg = `Janus: Executing: "${currentTask.description}" for agent ${currentTask.agent}.`;
-  console.log(logMsg);
-  broadcast({ type: 'log', workflowId, message: logMsg });
+  tasks[readyTaskIndex] = { ...currentTask, status: 'in_progress' };
 
-  let agentOutput: any;
-  let agentInput = { input: currentTask.input, chat_history: [] };
-
-  if (currentTask.agent === 'Corvus') {
-      const fornaxTask = tasks.find(t => t.id === currentTask.dependencies![0]);
-      const fornaxToolOutput = fornaxTask!.output!.toolOutput as string; 
-      const fornaxOutput = JSON.parse(fornaxToolOutput);
-      const corvusInputPayload = { ...currentTask.input, orderId: fornaxOutput.orderId, trackingNumber: fornaxOutput.trackingNumber };
-      agentInput = { input: corvusInputPayload, chat_history: [] };
-      agentOutput = await corvusExecutor.invoke(agentInput, config);
-  } else if (currentTask.agent === 'Lyra') {
-      agentOutput = await lyraExecutor.invoke(agentInput, config);
-  } else if (currentTask.agent === 'Caelus') {
-      agentOutput = await caelusExecutor.invoke(agentInput, config);
-  } else if (currentTask.agent === 'Fornax') {
-      agentOutput = await fornaxExecutor.invoke(agentInput, config);
+  let resolvedInput: any;
+  if (typeof currentTask.input === 'string' && currentTask.input.trim().startsWith('(state) =>')) {
+    try {
+      const dynamicInputFn = new Function('state', `return (${currentTask.input})(state);`);
+      resolvedInput = dynamicInputFn(state);
+    } catch (e) {
+      console.error(`Error resolving dynamic input for task "${currentTask.description}":`, e);
+      currentTask.status = 'failed';
+      currentTask.output = { agentResponse: `Failed to resolve dynamic input: ${(e as Error).message}` };
+      tasks[readyTaskIndex] = currentTask;
+      return { ...state, tasks };
+    }
   } else {
-      agentOutput = { output: "No action taken." };
+    resolvedInput = currentTask.input;
+  }
+  
+  const logMsg = `Janus: Executing: "${currentTask.description}" for agent ${currentTask.agent}.`;
+  broadcast({ type: 'log', workflowId, message: logMsg });
+  
+  const agentInput = { input: resolvedInput, chat_history: [] };
+
+  let agentExecutor;
+  switch (currentTask.agent) {
+    case 'Lyra': agentExecutor = lyraExecutor; break;
+    case 'Caelus': agentExecutor = caelusExecutor; break;
+    case 'Fornax': agentExecutor = fornaxExecutor; break;
+    case 'Corvus': agentExecutor = corvusExecutor; break;
+    default: throw new Error(`Unknown agent: ${currentTask.agent}`);
   }
 
-  currentTask.status = 'awaiting_human_approval'; 
-  const toolOutput = agentOutput.intermediateSteps?.[0]?.observation ?? null;
-  currentTask.output = { agentResponse: agentOutput.output, toolOutput };
+  const agentOutput = await agentExecutor.invoke(agentInput, config);
+
+ let toolOutput = agentOutput.intermediateSteps?.[0]?.observation;
   
-  const finalTasks = [...tasks];
-  finalTasks[readyTaskIndex] = currentTask;
+  if (toolOutput && typeof toolOutput === 'string') {
+    try { toolOutput = JSON.parse(toolOutput); } catch (e) { /* ignore non-JSON strings */ }
+  }
+
+  currentTask.output = { agentResponse: agentOutput.output, toolOutput };
+
+  let updatedProductState = state.product;
+  
+  // Check if the tool successfully returned a product object
+  if (toolOutput && typeof toolOutput === 'object' && (toolOutput as any).productId) {
+    console.log(`[Graph] Product creation SUCCEEDED for task ${currentTask.id}. Updating state.`);
+    currentTask.status = 'awaiting_human_approval';
+    updatedProductState = toolOutput as any;
+  } 
+  // Check if the tool returned an error
+  else if (toolOutput && typeof toolOutput === 'object' && (toolOutput as any).error) {
+    console.log(`[Graph] Tool returned an error for task ${currentTask.id}. Marking as FAILED.`);
+    currentTask.status = 'failed';
+  }
+  // This handles research tasks that don't call the product tool
+  else {
+    console.log(`[Graph] Task ${currentTask.id} completed without product creation. Marking for approval.`);
+    currentTask.status = 'awaiting_human_approval';
+  }
+
+  tasks[readyTaskIndex] = currentTask;
 
   return {
-      tasks: finalTasks,
-      humanApprovalNeeded: true, 
-      systemMessages: [`Janus: Task "${currentTask.id}" executed. Awaiting approval.`],
+    ...state,
+    tasks,
+    humanApprovalNeeded: currentTask.status === 'awaiting_human_approval',
+    product: updatedProductState,
+    systemMessages: [`Janus: Task "${currentTask.id}" executed.`],
   };
 }
 
@@ -127,7 +163,11 @@ async function humanApprovalGateNode(state: AgentState, config: { configurable: 
   const workflowId = config.configurable.runId;
   console.log('\n--- HUMAN APPROVAL GATE ---');
   const taskForApproval = state.tasks.find(t => t.status === 'awaiting_human_approval');
-  if (!taskForApproval || !workflowId) return { humanApprovalNeeded: false };
+  
+  if (!taskForApproval || !workflowId) {
+    // If no task is awaiting approval, do nothing and continue.
+    return { humanApprovalNeeded: false };
+  }
 
   console.log(`Janus: Paused. Waiting for human response on WebSocket for workflow ${workflowId}.`);
   broadcast({ type: 'gate:approval_required', workflowId, task: taskForApproval });
@@ -142,10 +182,15 @@ async function humanApprovalGateNode(state: AgentState, config: { configurable: 
 
   broadcast({ type: 'log', workflowId, message: `Human Partner: Task "${approvedTask.id}" was ${newStatus}.` });
 
+  // --- THIS IS THE CRITICAL FIX ---
+  // We return the entire existing state using the spread operator,
+  // then we overwrite only the fields we've changed.
+  // This ensures the 'product' property is preserved and passed along.
   return {
-      tasks: newTasks,
-      humanApprovalNeeded: false,
-      systemMessages: [`Human Partner: Task "${approvedTask.id}" was ${newStatus}.`],
+    ...state, // Preserve all existing state properties (like 'product')
+    tasks: newTasks,
+    humanApprovalNeeded: false,
+    systemMessages: [`Human Partner: Task "${approvedTask.id}" was ${newStatus}.`],
   };
 }
   
@@ -183,20 +228,16 @@ console.log('Aegis workflow compiled successfully.');
 // DEFINITIVE FIX: Extract the handler logic into a named async function.
 const handleStartWorkflow = async (req: Request, res: Response, next: express.NextFunction) => {
   console.log('Received request to start workflow.');
-  const { initialTasks } = req.body;
+  let { initialTasks } = req.body; // Using 'let' to allow modification
 
   if (!initialTasks || !Array.isArray(initialTasks)) {
       return res.status(400).json({ error: 'initialTasks array is required.' });
   }
 
   const workflowId = `run-${uuidv4()}`;
-  const initialState = { tasks: initialTasks };
+  const initialState = { tasks: initialTasks, systemMessages: [], humanApprovalNeeded: false, product: undefined };
 
-  // Immediately respond to the client so it doesn't time out.
-  res.status(202).json({
-      workflowId,
-      message: "Workflow accepted and initiated. Monitor WebSocket for real-time updates."
-  });
+  res.status(202).json({ workflowId, message: "Workflow accepted and initiated." });
 
   // Now, run the long-running workflow in the background.
   try {

@@ -5,5 +5,8 @@
   "description": "The monorepo for Project Aegis.",
   "keywords": [],
   "author": "Marius Stander",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv-cli": "^8.0.0"
+  }
 }

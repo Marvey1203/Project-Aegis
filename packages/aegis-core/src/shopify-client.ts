@@ -3,28 +3,26 @@
 import { shopifyApi, LATEST_API_VERSION, Session } from '@shopify/shopify-api';
 import '@shopify/shopify-api/adapters/node';
 
-// Ensure environment variables are loaded
+// This file relies on environment variables loaded by tools.ts
 if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN) {
-  throw new Error('Shopify environment variables are not set.');
+  throw new Error('CRITICAL: Shopify environment variables are not set. Ensure they are in the root .env file.');
 }
 
 const shopify = shopifyApi({
   apiVersion: LATEST_API_VERSION,
-  apiSecretKey: 'dummy-secret-key', // Not needed for private apps, but required by the library
+  apiSecretKey: 'aegis-secret', // Not used for private apps, but required by the library
   adminApiAccessToken: process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN,
   isCustomStoreApp: true,
   isEmbeddedApp: false, // Add this line to satisfy the required property
-  hostName: process.env.SHOPIFY_STORE_DOMAIN,
+  hostName: process.env.SHOPIFY_STORE_DOMAIN.replace(/https?:\/\//, ''),
 });
 
-// Create a session object to use for making requests
 const session = new Session({
-  id: 'aegis-session',
+  id: 'aegis-graphql-session',
   shop: process.env.SHOPIFY_STORE_DOMAIN,
   state: 'aegis-state',
   isOnline: false,
   accessToken: process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN,
 });
 
-// Create an authenticated GraphQL client
 export const shopifyClient = new shopify.clients.Graphql({ session });

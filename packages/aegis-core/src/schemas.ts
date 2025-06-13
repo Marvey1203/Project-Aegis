@@ -14,7 +14,7 @@ export const TaskSchema = z.object({
   id: z.string().uuid(),
   description: z.string(),
   agent: Agent,
-  input: z.record(z.unknown()),
+  input: z.any(),
   output: z.record(z.unknown()).optional(),
   status: TaskStatus.default('pending'),
   dependencies: z.array(z.string().uuid()).optional(),
@@ -29,6 +29,12 @@ export interface AgentState {
   tasks: Task[];
   systemMessages: string[];
   humanApprovalNeeded: boolean;
+    product?: { // Add this optional property
+    productId: string;
+    productUrl: string;
+    title: string;
+    description: string;
+  };
 }
 
 // --- LangGraph State Definition ---
@@ -47,6 +53,10 @@ export const graphState = {
   humanApprovalNeeded: {
     value: (x: boolean, y: boolean) => y, // Last write wins
     default: () => false,
+  },
+    product: {
+    value: (x: any, y: any) => y, // Last write wins. The new value replaces the old.
+    default: () => undefined,
   },
 };
 
@@ -92,4 +102,17 @@ export const SendShippingConfirmationEmailInputSchema = z.object({
   customerEmail: z.string().describe("The email address of the customer."), // CORRECTED: Removed the incompatible .email() validator.
   orderId: z.string().describe("The unique ID of the customer's order."),
   trackingNumber: z.string().describe("The shipping carrier's tracking number for the order."),
+});
+
+// --- Shopify Product Creation Tool Schema ---
+export const productSchema = z.object({
+  title: z.string().describe("The title of the product."),
+  description: z.string().describe("The detailed description of the product (HTML format is okay)."),
+  price: z.number().describe("The selling price of the product."),
+});
+
+export const emailSchema = z.object({
+  to: z.string().describe("The recipient's email address. This must be a valid email format."),
+  subject: z.string().describe("The subject line of the email."),
+  htmlBody: z.string().describe("The content of the email in HTML format."),
 });
