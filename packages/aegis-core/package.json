@@ -16,6 +16,7 @@
     "@langchain/google-genai": "^0.2.10",
     "@langchain/langgraph": "^0.3.1",
     "@langchain/tavily": "^0.1.2",
+    "@shopify/shopify-api": "^11.13.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
