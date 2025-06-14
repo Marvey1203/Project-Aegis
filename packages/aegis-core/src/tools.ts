@@ -32,9 +32,8 @@ export async function generateAdCopy(input: z.infer<typeof GenerateAdCopyInputSc
   return `Ad copy for ${input.productName}`; // Placeholder for brevity
 }
 
-// in packages/aegis-core/src/tools.ts
 
-// Find the createShopifyProduct function
+
 export async function createShopifyProduct(input: z.infer<typeof productSchema>): Promise<object> {
   console.log(`--- TOOL: createShopifyProduct ---`);
   console.log(`Calling Shopify to create product: ${input.title}`);
@@ -60,11 +59,12 @@ export async function createShopifyProduct(input: z.infer<typeof productSchema>)
   try {
     const response: any = await shopifyClient.request(PRODUCT_CREATE_MUTATION, {
       variables: {
+        // THIS IS THE DEFINITIVE, CORRECT INPUT STRUCTURE
         input: {
           title: input.title,
           descriptionHtml: input.description,
           status: "ACTIVE",
-          // THIS IS THE CRITICAL FIX for the $0.00 price issue.
+          // The price MUST be inside a variants array.
           variants: [{ price: input.price.toString() }],
         },
       },

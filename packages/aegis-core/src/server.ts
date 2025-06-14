@@ -56,12 +56,15 @@ function broadcast(message: object) {
 // --- AGENT GRAPH LOGIC ---
 // (Node functions delegateTaskNode, humanApprovalGateNode, and routeTasks are unchanged and correct)
 
+// In packages/aegis-core/src/server.ts
+
+// In packages/aegis-core/src/server.ts
+
 async function delegateTaskNode(state: AgentState, config: { configurable: { runId: string } }): Promise<Partial<AgentState>> {
   const workflowId = config.configurable.runId;
   broadcast({ type: 'log', workflowId, message: `--- DELEGATION NODE ---` });
   
   let { tasks } = state;
-  
   const tasksWithCascadedFailures = tasks.map(task => {
     if (task.status === 'pending' && task.dependencies?.some(depId => tasks.find(t => t.id === depId)?.status === 'failed')) {
       const logMsg = `Janus: Task "${task.description}" is being marked as failed due to a failed dependency.`;
@@ -99,7 +102,7 @@ async function delegateTaskNode(state: AgentState, config: { configurable: { run
       currentTask.status = 'failed';
       currentTask.output = { agentResponse: `Failed to resolve dynamic input: ${(e as Error).message}` };
       tasks[readyTaskIndex] = currentTask;
-      return { ...state, tasks };
+      return { ...state, tasks }; 
     }
   } else {
     resolvedInput = currentTask.input;
@@ -119,44 +122,70 @@ async function delegateTaskNode(state: AgentState, config: { configurable: { run
     default: throw new Error(`Unknown agent: ${currentTask.agent}`);
   }
 
-  const agentOutput = await agentExecutor.invoke(agentInput, config);
+  // We wrap the agent execution in a try/catch to handle any unexpected errors.
+  try {
+    const agentOutput = await agentExecutor.invoke(agentInput, config);
 
- let toolOutput = agentOutput.intermediateSteps?.[0]?.observation;
-  
-  if (toolOutput && typeof toolOutput === 'string') {
-    try { toolOutput = JSON.parse(toolOutput); } catch (e) { /* ignore non-JSON strings */ }
-  }
+    let toolOutput = agentOutput.intermediateSteps?.[0]?.observation;
+    const agentResponse = agentOutput.output;
 
-  currentTask.output = { agentResponse: agentOutput.output, toolOutput };
+    // This block is for robustly handling the different kinds of outputs we might get.
+    if (toolOutput && typeof toolOutput === 'string') {
+      try { toolOutput = JSON.parse(toolOutput); } catch (e) { /* ignore non-JSON strings */ }
+    }
+    if (!toolOutput && typeof agentResponse === 'string') {
+       try {
+         const jsonMatch = agentResponse.match(/{[\s\S]*}/);
+         if (jsonMatch) {
+           toolOutput = JSON.parse(jsonMatch[0]);
+         }
+       } catch (e) { /* ignore */ }
+    }
+    
+    currentTask.output = { agentResponse, toolOutput };
+    
+    // --- THIS IS THE FINAL, NUANCED LOGIC ---
+    let updatedProductState = state.product;
+    
+    // If the tool produced a product ID, it's a success and we update the state.
+    if (toolOutput && typeof toolOutput === 'object' && (toolOutput as any).productId) {
+      console.log(`[Graph] Product creation SUCCEEDED for task ${currentTask.id}.`);
+      currentTask.status = 'awaiting_human_approval';
+      updatedProductState = toolOutput as any;
+    } 
+    // If it's a research task that produced any other valid tool output (like the JSON from Lyra), it's also a success.
+    else if (toolOutput) {
+      console.log(`[Graph] Research task SUCCEEDED for task ${currentTask.id}.`);
+      currentTask.status = 'awaiting_human_approval';
+    }
+    // If no tool was used but the agent gave a final answer, that's also a form of success.
+    else if (agentResponse) {
+      console.log(`[Graph] Agent task completed with final answer for task ${currentTask.id}.`);
+      currentTask.status = 'awaiting_human_approval';
+    }
+    else {
+      // Only if there's no output whatsoever do we consider it a failure.
+      console.log(`[Graph] Task ${currentTask.id} FAILED. Agent did not produce any output.`);
+      currentTask.status = 'failed';
+    }
 
-  let updatedProductState = state.product;
-  
-  // Check if the tool successfully returned a product object
-  if (toolOutput && typeof toolOutput === 'object' && (toolOutput as any).productId) {
-    console.log(`[Graph] Product creation SUCCEEDED for task ${currentTask.id}. Updating state.`);
-    currentTask.status = 'awaiting_human_approval';
-    updatedProductState = toolOutput as any;
-  } 
-  // Check if the tool returned an error
-  else if (toolOutput && typeof toolOutput === 'object' && (toolOutput as any).error) {
-    console.log(`[Graph] Tool returned an error for task ${currentTask.id}. Marking as FAILED.`);
+    tasks[readyTaskIndex] = currentTask;
+
+    return {
+      ...state,
+      tasks,
+      humanApprovalNeeded: currentTask.status === 'awaiting_human_approval',
+      product: updatedProductState,
+    };
+
+  } catch (error) {
+    // This catches any catastrophic failures in the agent itself.
+    console.error(`Agent execution FAILED for task "${currentTask.description}":`, error);
     currentTask.status = 'failed';
+    currentTask.output = { agentResponse: `Agent failed with error: ${(error as Error).message}` };
+    tasks[readyTaskIndex] = currentTask;
+    return { ...state, tasks };
   }
-  // This handles research tasks that don't call the product tool
-  else {
-    console.log(`[Graph] Task ${currentTask.id} completed without product creation. Marking for approval.`);
-    currentTask.status = 'awaiting_human_approval';
-  }
-
-  tasks[readyTaskIndex] = currentTask;
-
-  return {
-    ...state,
-    tasks,
-    humanApprovalNeeded: currentTask.status === 'awaiting_human_approval',
-    product: updatedProductState,
-    systemMessages: [`Janus: Task "${currentTask.id}" executed.`],
-  };
 }
 
 async function humanApprovalGateNode(state: AgentState, config: { configurable: { runId: string } }): Promise<Partial<AgentState>> {
