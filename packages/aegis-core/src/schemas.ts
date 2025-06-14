@@ -107,8 +107,8 @@ export const SendShippingConfirmationEmailInputSchema = z.object({
 // --- Shopify Product Creation Tool Schema ---
 export const productSchema = z.object({
   title: z.string().describe("The title of the product."),
-  description: z.string().describe("The detailed description of the product (HTML format is okay)."),
-  price: z.number().describe("The selling price of the product."),
+  description: z.string().describe("The rich text or HTML description of the product."),
+  price: z.number().describe("The selling price of the product."), // Ensure this line exists
 });
 
 export const emailSchema = z.object({
