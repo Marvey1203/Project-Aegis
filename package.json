@@ -7,6 +7,18 @@
   "author": "Marius Stander",
   "license": "ISC",
   "devDependencies": {
-    "dotenv-cli": "^8.0.0"
+    "@langchain/core": "^0.3.58",
+    "@langchain/google-genai": "^0.2.12",
+    "@types/node": "^24.0.1",
+    "dotenv": "^16.5.0",
+    "dotenv-cli": "^8.0.0",
+    "langchain": "^0.3.28",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.3"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "zod": "^3.25.64",
+    "zod-to-json-schema": "^3.24.5"
   }
 }

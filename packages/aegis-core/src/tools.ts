@@ -8,7 +8,6 @@ import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { Resend } from 'resend';
 import { GenerateAdCopyInputSchema, productSchema, emailSchema } from './schemas.js';
-import { CJApiClient } from './cj-client.js';
 import fetch from 'node-fetch';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -33,39 +32,39 @@ const CJ_BASE_URL = 'https://developers.cjdropshipping.com/api2.0';
  * A robust tool to search the CJ Dropshipping catalog for products via their official API.
  * This is vastly superior to scraping.
  */
-export const getSupplierDataTool = new DynamicStructuredTool({
-    name: "getSupplierData",
-    description: "Searches the approved supplier (CJ Dropshipping) API for a product and returns a structured list of the top 5 potential products.",
-    schema: z.object({
-        productQuery: z.string().describe("The name of the product to search for."),
-    }),
-    func: async ({ productQuery }) => {
-        try {
-            console.log(`--- TOOL: getSupplierData (Client v2) ---`);
-            // --- CHANGE 2: Use the new client instead of fetch ---
-            const data: any = await CJApiClient.searchProducts(productQuery);
+// export const getSupplierDataTool = new DynamicStructuredTool({
+//     name: "getSupplierData",
+//     description: "Searches the approved supplier (CJ Dropshipping) API for a product and returns a structured list of the top 5 potential products.",
+//     schema: z.object({
+//         productQuery: z.string().describe("The name of the product to search for."),
+//     }),
+//     func: async ({ productQuery }) => {
+//         try {
+//             console.log(`--- TOOL: getSupplierData (Client v2) ---`);
+//             // --- CHANGE 2: Use the new client instead of fetch ---
+//             const data: any = await CJApiClient.searchProducts(productQuery);
 
-            if (!data.result || !data.data || !data.data.list) {
-                 throw new Error(`CJ API returned unexpected data structure. Message: ${data.message}`);
-            }
+//             if (!data.result || !data.data || !data.data.list) {
+//                  throw new Error(`CJ API returned unexpected data structure. Message: ${data.message}`);
+//             }
 
-            const products = data.data.list.map((p: any) => ({
-                supplierProductId: p.productId,
-                title: p.productTitle,
-                supplierCost: parseFloat(p.sellPrice),
-                imageUrl: p.productMainImage,
-            }));
+//             const products = data.data.list.map((p: any) => ({
+//                 supplierProductId: p.productId,
+//                 title: p.productTitle,
+//                 supplierCost: parseFloat(p.sellPrice),
+//                 imageUrl: p.productMainImage,
+//             }));
 
-            console.log(`[Tool Success] Found ${products.length} potential products from supplier API.`);
-            return JSON.stringify(products);
+//             console.log(`[Tool Success] Found ${products.length} potential products from supplier API.`);
+//             return JSON.stringify(products);
 
-        } catch (error: any) {
-            const errorMessage = error.message || String(error);
-            console.error(`[Tool Error] Failed to get supplier data for "${productQuery}":`, errorMessage);
-            return JSON.stringify({ error: `Failed to get supplier data: ${errorMessage}` });
-        }
-    }
-});
+//         } catch (error: any) {
+//             const errorMessage = error.message || String(error);
+//             console.error(`[Tool Error] Failed to get supplier data for "${productQuery}":`, errorMessage);
+//             return JSON.stringify({ error: `Failed to get supplier data: ${errorMessage}` });
+//         }
+//     }
+// });
 
 /**
  * A general-purpose tool to scrape clean text content from a URL.

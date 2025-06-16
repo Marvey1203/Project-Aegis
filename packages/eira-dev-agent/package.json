@@ -1,0 +1,25 @@
+{
+  "name": "@aegis/eira-dev-agent",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "bin": {
+    "eira": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx watch src/cli.ts",
+    "build": "tsc",
+    "start": "dotenv -e ../../.env -- node dist/cli.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.19.0",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.23.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.1",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

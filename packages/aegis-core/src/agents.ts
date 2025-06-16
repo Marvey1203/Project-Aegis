@@ -48,19 +48,29 @@ const fornaxTools = [
 const caelusTools = [adCopyTool];
 const corvusTools = [sendEmailTool];
 
-// --- Agent Factory (Unchanged) ---
-async function createAgentExecutor(
+// --- Agent Factory (Updated to remove chat_history placeholder) ---
+export async function createAgentExecutor(
   llm: ChatGoogleGenerativeAI,
   tools: any[],
   systemMessage: string
-) {
-  const prompt = ChatPromptTemplate.fromMessages([
+): Promise<AgentExecutor> {
+  // The prompt expects both chat_history and input, matching your run-agent calls.
+  interface CreateAgentExecutorParams {
+    llm: ChatGoogleGenerativeAI;
+    tools: any[];
+    systemMessage: string;
+  }
+
+
+  const prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
     ["system", systemMessage],
     new MessagesPlaceholder("chat_history"),
     ["human", "{input}"],
     new MessagesPlaceholder("agent_scratchpad"),
   ]);
+
   const agent = await createToolCallingAgent({ llm, tools, prompt });
+
   return new AgentExecutor({ agent, tools, verbose: true });
 }
 
