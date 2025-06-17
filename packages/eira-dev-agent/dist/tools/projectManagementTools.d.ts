@@ -78,3 +78,49 @@ export declare const createSprintTool: DynamicStructuredTool<z.ZodObject<{
     sprintStatus?: "completed" | "planned" | "active" | "on-hold" | undefined;
     makeActiveSprint?: boolean | undefined;
 }, string>;
+export declare const createTaskTool: DynamicStructuredTool<z.ZodObject<{
+    projectId: z.ZodString;
+    sprintId: z.ZodString;
+    taskDescription: z.ZodString;
+    taskId: z.ZodOptional<z.ZodString>;
+    status: z.ZodDefault<z.ZodEnum<["pending", "in-progress", "completed", "blocked", "deferred"]>>;
+    relevantFiles: z.ZodDefault<z.ZodOptional<z.ZodArray<z.ZodString, "many">>>;
+    notes: z.ZodDefault<z.ZodOptional<z.ZodString>>;
+    makeActiveTask: z.ZodDefault<z.ZodBoolean>;
+}, "strip", z.ZodTypeAny, {
+    projectId: string;
+    sprintId: string;
+    status: "deferred" | "pending" | "in-progress" | "completed" | "blocked";
+    taskDescription: string;
+    relevantFiles: string[];
+    notes: string;
+    makeActiveTask: boolean;
+    taskId?: string | undefined;
+}, {
+    projectId: string;
+    sprintId: string;
+    taskDescription: string;
+    status?: "deferred" | "pending" | "in-progress" | "completed" | "blocked" | undefined;
+    taskId?: string | undefined;
+    relevantFiles?: string[] | undefined;
+    notes?: string | undefined;
+    makeActiveTask?: boolean | undefined;
+}>, {
+    projectId: string;
+    sprintId: string;
+    status: "deferred" | "pending" | "in-progress" | "completed" | "blocked";
+    taskDescription: string;
+    relevantFiles: string[];
+    notes: string;
+    makeActiveTask: boolean;
+    taskId?: string | undefined;
+}, {
+    projectId: string;
+    sprintId: string;
+    taskDescription: string;
+    status?: "deferred" | "pending" | "in-progress" | "completed" | "blocked" | undefined;
+    taskId?: string | undefined;
+    relevantFiles?: string[] | undefined;
+    notes?: string | undefined;
+    makeActiveTask?: boolean | undefined;
+}, string>;

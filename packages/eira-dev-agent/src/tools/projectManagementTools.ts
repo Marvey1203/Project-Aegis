@@ -69,7 +69,7 @@ async function writeKnowledgeBase(kb: KnowledgeBase): Promise<void> {
   }
 }
 
-// Define Zod schema for the tool arguments
+// --- createSprintTool --- 
 const CreateSprintToolArgsSchema = z.object({
   projectId: z.string().describe("The ID of the project to which this sprint will be added."),
   sprintGoal: z.string().describe("The main objective or goal for the new sprint."),
@@ -84,31 +84,23 @@ const CreateSprintToolArgsSchema = z.object({
   sprintStatus: z.enum(["planned", "active", "completed", "on-hold"]).default("planned").describe("The initial status of the sprint."),
   makeActiveSprint: z.boolean().default(false).describe("If true, this new sprint will be set as the currentSprintId for the project and activeContext if applicable.")
 });
-
-// Type for the arguments, inferred from Zod schema
 type CreateSprintToolArgs = z.infer<typeof CreateSprintToolArgsSchema>;
-
-// The core logic of the createSprintTool, now as a regular async function
 async function createSprintLogic(args: CreateSprintToolArgs): Promise<string> {
   try {
     const kb = await readKnowledgeBase();
     const project = kb.projects.find(p => p.projectId === args.projectId);
-
     if (!project) {
-      // Error: Project not found
       return JSON.stringify({
         success: false,
         sprintId: args.sprintId || null,
         message: `Error: Project with ID '${args.projectId}' not found.`
       });
     }
-
     let newSprintId = args.sprintId;
     if (!newSprintId) {
       newSprintId = `sprint_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     } else {
       if (project.sprints.some(s => s.sprintId === newSprintId)) {
-        // Error: Sprint ID already exists
         return JSON.stringify({
           success: false,
           sprintId: newSprintId,
@@ -116,7 +108,6 @@ async function createSprintLogic(args: CreateSprintToolArgs): Promise<string> {
         });
       }
     }
-
     const newTasks: Task[] = (args.tasks || []).map((taskInput, index) => ({
       taskId: taskInput.taskId || `${newSprintId}_task_${String(index + 1).padStart(3, '0')}`,
       taskDescription: taskInput.taskDescription,
@@ -124,18 +115,15 @@ async function createSprintLogic(args: CreateSprintToolArgs): Promise<string> {
       relevantFiles: taskInput.relevantFiles || [],
       notes: taskInput.notes || ""
     }));
-
     const newSprint: Sprint = {
       sprintId: newSprintId,
       sprintGoal: args.sprintGoal,
       sprintStatus: args.sprintStatus || "planned",
       tasks: newTasks,
       currentTaskId: newTasks.length > 0 ? newTasks[0].taskId : null,
-      sprintSummary: "" // Initialize with empty summary
+      sprintSummary: ""
     };
-
     project.sprints.push(newSprint);
-
     if (args.makeActiveSprint) {
       project.currentSprintId = newSprintId;
       if (kb.activeContext && kb.activeContext.projectId === args.projectId) {
@@ -143,17 +131,13 @@ async function createSprintLogic(args: CreateSprintToolArgs): Promise<string> {
         kb.activeContext.taskId = newSprint.currentTaskId;
       }
     }
-
     await writeKnowledgeBase(kb);
-    // Success
     return JSON.stringify({
       success: true,
       sprintId: newSprintId,
       message: `Sprint '${newSprintId}' created successfully in project '${args.projectId}'.`
     });
-
   } catch (error: any) {
-    // Catch any other errors during the process
     return JSON.stringify({
       success: false,
       sprintId: args.sprintId || null,
@@ -161,14 +145,67 @@ async function createSprintLogic(args: CreateSprintToolArgs): Promise<string> {
     });
   }
 }
-
-// Wrap the logic in DynamicStructuredTool
 export const createSprintTool = new DynamicStructuredTool({
   name: "createSprintTool",
   description: "Creates a new sprint within a specified project in the eira_knowledge_base.json file. Handles reading the knowledge base, adding the sprint, and writing updates.",
   schema: CreateSprintToolArgsSchema,
-  func: createSprintLogic, // The actual function to execute
+  func: createSprintLogic,
 });
 
-// Potential future tools like createTaskTool would go here
-// export const createTaskTool = new DynamicStructuredTool({...});
+// --- createTaskTool --- 
+const CreateTaskToolArgsSchema = z.object({
+  projectId: z.string().describe("The ID of the project containing the sprint."),
+  sprintId: z.string().describe("The ID of the sprint to which this task will be added."),
+  taskDescription: z.string().describe("A clear description of what the task involves."),
+  taskId: z.string().optional().describe("An optional unique identifier for the task. If not provided, one will be generated."),
+  status: z.enum(["pending", "in-progress", "completed", "blocked", "deferred"]).default("pending").describe("The initial status of the task."),
+  relevantFiles: z.array(z.string()).optional().default([]).describe("An optional list of relative file paths relevant to this task."),
+  notes: z.string().optional().default("").describe("Optional notes or further details about the task."),
+  makeActiveTask: z.boolean().default(false).describe("If true, this new task will be set as the currentTaskId for the sprint, and the root activeContext.taskId if applicable.")
+});
+type CreateTaskToolArgs = z.infer<typeof CreateTaskToolArgsSchema>;
+async function createTaskLogic(args: CreateTaskToolArgs): Promise<string> {
+  try {
+    const kb = await readKnowledgeBase();
+    const project = kb.projects.find(p => p.projectId === args.projectId);
+    if (!project) {
+      return JSON.stringify({ success: false, taskId: args.taskId || null, message: `Error: Project with ID '${args.projectId}' not found.` });
+    }
+    const sprint = project.sprints.find(s => s.sprintId === args.sprintId);
+    if (!sprint) {
+      return JSON.stringify({ success: false, taskId: args.taskId || null, message: `Error: Sprint with ID '${args.sprintId}' not found in project '${args.projectId}'.` });
+    }
+    let newTaskId = args.taskId;
+    if (!newTaskId) {
+      newTaskId = `task_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    } else {
+      if (sprint.tasks.some(t => t.taskId === newTaskId)) {
+        return JSON.stringify({ success: false, taskId: newTaskId, message: `Error: Task with ID '${newTaskId}' already exists in sprint '${args.sprintId}'.` });
+      }
+    }
+    const newTask: Task = {
+      taskId: newTaskId,
+      taskDescription: args.taskDescription,
+      status: args.status || "pending",
+      relevantFiles: args.relevantFiles || [],
+      notes: args.notes || ""
+    };
+    sprint.tasks.push(newTask);
+    if (args.makeActiveTask) {
+      sprint.currentTaskId = newTaskId;
+      if (kb.activeContext && kb.activeContext.projectId === args.projectId && kb.activeContext.sprintId === args.sprintId) {
+        kb.activeContext.taskId = newTaskId;
+      }
+    }
+    await writeKnowledgeBase(kb);
+    return JSON.stringify({ success: true, taskId: newTaskId, message: `Task '${newTaskId}' created successfully in sprint '${args.sprintId}'.` });
+  } catch (error: any) {
+    return JSON.stringify({ success: false, taskId: args.taskId || null, message: `Error in createTaskTool: ${error.message}` });
+  }
+}
+export const createTaskTool = new DynamicStructuredTool({
+  name: "createTaskTool",
+  description: "Creates a new task within a specified sprint of a specified project in the eira_knowledge_base.json file.",
+  schema: CreateTaskToolArgsSchema,
+  func: createTaskLogic,
+});
