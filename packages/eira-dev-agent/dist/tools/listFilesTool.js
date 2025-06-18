@@ -1,42 +1,36 @@
 "use strict";
+// src/tools/listFilesTool.ts
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.listFilesTool = void 0;
-const fs_1 = require("fs");
-const path_1 = __importDefault(require("path"));
 const zod_1 = require("zod");
 const tools_1 = require("@langchain/core/tools");
-const path_resolver_1 = require("./path-resolver");
+const axios_1 = __importDefault(require("axios"));
 const schema = zod_1.z.object({
-    directoryPath: zod_1.z.string().describe("The relative path of the directory to inspect (e.g., 'core/src')."),
+    directoryPath: zod_1.z.string().describe("The relative path of the directory to inspect (e.g., 'src/' or '.'). Defaults to the current directory if empty."),
 });
-async function logic({ directoryPath }) {
-    try {
-        const resolvedPath = (0, path_resolver_1.resolveToolPath)(directoryPath);
-        async function generateFileTree(dir, indent) {
-            const entries = await fs_1.promises.readdir(dir, { withFileTypes: true });
-            let tree = "";
-            for (const entry of entries) {
-                if (entry.name === 'node_modules' || entry.name === '.next' || entry.name === '.git')
-                    continue;
-                tree += `${indent}├── ${entry.name}\n`;
-                if (entry.isDirectory()) {
-                    tree += await generateFileTree(path_1.default.join(dir, entry.name), `${indent}│   `);
-                }
-            }
-            return tree;
-        }
-        return await generateFileTree(resolvedPath, "") || "Directory is empty.";
-    }
-    catch (err) {
-        return `Error listing files: ${err instanceof Error ? err.message : String(err)}`;
-    }
-}
 exports.listFilesTool = new tools_1.DynamicStructuredTool({
     name: "listFilesTool",
-    description: "Recursively lists all files and subdirectories within a given directory path.",
+    description: "Lists all files and subdirectories within a given directory path via the Eira file server.",
     schema,
-    func: logic,
+    func: async ({ directoryPath }) => {
+        const serverUrl = 'http://localhost:3001/api/listFiles';
+        try {
+            const response = await axios_1.default.post(serverUrl, { directoryPath });
+            if (response.data.success) {
+                return response.data.files.join('\n') || "Directory is empty.";
+            }
+            else {
+                return `Error from file server: ${response.data.error}`;
+            }
+        }
+        catch (error) {
+            if (axios_1.default.isAxiosError(error) && error.response) {
+                return `Error from file server: ${error.response.data.error || error.message}`;
+            }
+            return `Failed to connect to Eira file server at ${serverUrl}. Is it running?`;
+        }
+    },
 });

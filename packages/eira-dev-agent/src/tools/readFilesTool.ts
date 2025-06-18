@@ -1,30 +1,41 @@
-import { promises as fs } from "fs";
+// src/tools/readFilesTool.ts
+
 import { z } from "zod";
 import { DynamicStructuredTool } from "@langchain/core/tools";
-import { resolveToolPath } from "./path-resolver";
+import axios from "axios";
 
-const schema = z.object({
-  filePaths: z.array(z.string()).describe("An array of relative paths to files to read."),
+const readFilesSchema = z.object({
+  filePaths: z
+    .array(z.string())
+    .describe("An array of relative paths to files to read."),
 });
-
-async function logic({ filePaths }: z.infer<typeof schema>): Promise<string> {
-  const contents = await Promise.all(
-    filePaths.map(async (filePath) => {
-      try {
-        const resolvedPath = resolveToolPath(filePath);
-        const content = await fs.readFile(resolvedPath, "utf-8");
-        return `--- FILE: ${filePath} ---\n${content}\n--- END OF FILE: ${filePath} ---`;
-      } catch (err) {
-        return `--- ERROR READING FILE: ${filePath} ---\n${err instanceof Error ? err.message : String(err)}`;
-      }
-    })
-  );
-  return contents.join("\n\n");
-}
 
 export const readFilesTool = new DynamicStructuredTool({
   name: "readFilesTool",
-  description: "Reads the contents of multiple files from a list of paths.",
-  schema,
-  func: logic,
+  description: "Reads the contents of one or more files from the local file system via the Eira file server.",
+  schema: readFilesSchema,
+  func: async ({ filePaths }) => {
+    const serverUrl = "http://localhost:3001/api/readFiles";
+    
+    try {
+      // The server now handles multiple files in one call
+      const response = await axios.post(serverUrl, { filePaths });
+
+      if (response.data.success) {
+        // Format the response from the server which contains an array of file contents
+        return response.data.files
+          .map((file: { filePath: string; content: string }) => 
+            `--- FILE: ${file.filePath} ---\n${file.content}\n--- END OF FILE: ${file.filePath} ---`
+          )
+          .join("\n\n");
+      } else {
+        return `Error from file server: ${response.data.error}`;
+      }
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        return `Error from file server: ${error.response.data.error || error.message}`;
+      }
+      return `Failed to connect to Eira file server at ${serverUrl}. Is it running?`;
+    }
+  },
 });

@@ -1,6 +1,6 @@
+export declare function findProjectRoot(): string;
 /**
- * Resolves a file path by always joining it from the true project root,
- * which is determined by locating the `pnpm-workspace.yaml` file.
- * This makes the tool's behavior independent of the current working directory.
+ * Resolves a file path provided by the agent to an absolute path on the host machine.
+ * This is security-critical and ensures the agent cannot access files outside the project.
  */
 export declare function resolveToolPath(filePath: string): string;

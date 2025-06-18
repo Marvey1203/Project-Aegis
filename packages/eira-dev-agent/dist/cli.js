@@ -1,5 +1,5 @@
-#!/usr/bin/env node
 "use strict";
+// src/cli.ts
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -34,22 +34,23 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+// #!/usr/bin/env node
 require("dotenv/config");
 const eiraAgent_1 = require("./agent/eiraAgent");
 const readline = __importStar(require("readline/promises"));
 const process_1 = require("process");
 const messages_1 = require("@langchain/core/messages");
-const memoryUtils_1 = require("./memoryUtils"); // Added import
-const memoryFilePath = 'eira_mid_term_memory.json'; // Added memory file path
+const memoryUtils_1 = require("./memoryUtils");
+const memoryFilePath = 'eira_mid_term_memory.json';
 async function main() {
-    console.log("--- Eira Interactive CLI v1.3 (Mid-Term Memory Enabled) ---"); // Version bump for clarity
+    console.log("--- Eira Interactive CLI v1.4 (Robust Memory) ---");
     console.log("Initializing agent and loading memory...");
     const eira = eiraAgent_1.EiraAgent.create();
     const rl = readline.createInterface({ input: process_1.stdin, output: process_1.stdout });
-    // Load chat history from memory
-    let chatHistory = await (0, memoryUtils_1.loadMemory)(memoryFilePath); // Modified
+    let chatHistory = await (0, memoryUtils_1.loadMemory)(memoryFilePath);
     if (chatHistory.length > 0) {
-        console.log(`Loaded ${chatHistory.length / 2} previous interactions from memory.`);
+        const interactionCount = chatHistory.filter(m => m instanceof messages_1.HumanMessage).length;
+        console.log(`Loaded ${interactionCount} previous interactions from memory.`);
     }
     console.log("\nEira is ready. You can start the conversation. Type 'exit' to end.\n");
     while (true) {
@@ -58,25 +59,29 @@ async function main() {
             console.log('\nEira: Session concluded.');
             break;
         }
-        const humanMessage = new messages_1.HumanMessage(userInput);
         console.log('Eira is thinking...');
-        // Agent now returns the full response object
-        const agentResponseObject = await eira.run(userInput, [...chatHistory]);
-        // Construct AIMessage from the response object
-        // The response object structure from agentExecutor.invoke is typically { output: string, ...other_fields_like_tool_calls }
-        // For AIMessage, content is the primary text, tool_calls are for any tools the AI decided to call.
-        const aiMessageContent = agentResponseObject.output; // Assuming 'output' holds the textual response
-        const aiMessageToolCalls = agentResponseObject.tool_calls || []; // Assuming 'tool_calls' might exist
-        const aiMessage = new messages_1.AIMessage({
-            content: aiMessageContent,
-            tool_calls: aiMessageToolCalls.length > 0 ? aiMessageToolCalls : undefined, // Only add tool_calls if present
-        });
-        // Add messages to history AFTER the turn
-        chatHistory.push(humanMessage);
-        chatHistory.push(aiMessage);
-        // Save history after each interaction
-        await (0, memoryUtils_1.saveMemory)(memoryFilePath, chatHistory); // Added saveMemory call
-        console.log(`Eira: ${aiMessageContent}\n`);
+        try {
+            // FIX: Agent now returns the full and final message history for the session.
+            const finalMessages = await eira.run(userInput, chatHistory);
+            // The new chat history IS the final message list from the agent.
+            chatHistory = finalMessages;
+            // Save the complete and valid history after each interaction.
+            await (0, memoryUtils_1.saveMemory)(memoryFilePath, chatHistory);
+            // Display the last message to the user.
+            const lastMessage = chatHistory[chatHistory.length - 1];
+            const eiraResponseContent = lastMessage?.content ?? "[Eira produced no verbal response]";
+            // Don't display anything if the last message was a tool call with no text.
+            if (typeof eiraResponseContent === "string" && eiraResponseContent.trim() !== "") {
+                console.log(`Eira: ${eiraResponseContent}\n`);
+            }
+            else {
+                console.log(`Eira: [Took an action without speaking]\n`);
+            }
+        }
+        catch (error) {
+            console.error("\nError during agent execution:", error);
+            console.log("Please try again with a different input.\n");
+        }
     }
     rl.close();
 }

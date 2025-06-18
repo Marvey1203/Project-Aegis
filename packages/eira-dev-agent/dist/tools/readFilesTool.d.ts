@@ -10,4 +10,4 @@ export declare const readFilesTool: DynamicStructuredTool<z.ZodObject<{
     filePaths: string[];
 }, {
     filePaths: string[];
-}, string>;
+}, any>;

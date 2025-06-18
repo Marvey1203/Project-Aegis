@@ -10,4 +10,4 @@ export declare const listFilesTool: DynamicStructuredTool<z.ZodObject<{
     directoryPath: string;
 }, {
     directoryPath: string;
-}, string>;
+}, any>;

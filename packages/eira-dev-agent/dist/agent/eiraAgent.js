@@ -1,96 +1,136 @@
 "use strict";
+// src/agent/eiraAgent.ts
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EiraAgent = void 0;
-const agents_1 = require("langchain/agents");
-const prompts_1 = require("@langchain/core/prompts");
-const google_genai_1 = require("@langchain/google-genai");
-const generative_ai_1 = require("@google/generative-ai");
-// Import all tools
-const listFilesTool_1 = require("../tools/listFilesTool");
+exports.EiraAgent = exports.graph = void 0;
+const eira_1 = require("./eira");
+const langgraph_1 = require("@langchain/langgraph");
+const messages_1 = require("@langchain/core/messages");
+const tools_1 = require("../tools");
+const messages_2 = require("@langchain/core/messages");
 const readFilesTool_1 = require("../tools/readFilesTool");
-const writeFileTool_1 = require("../tools/writeFileTool");
-const createFileTool_1 = require("../tools/createFileTool");
-const runTestCommandTool_1 = require("../tools/runTestCommandTool");
-const getCurrentDirectoryTool_1 = require("../tools/getCurrentDirectoryTool");
-const findAndReplaceInFileTool_1 = require("../tools/findAndReplaceInFileTool");
-const askHumanForHelpTool_1 = require("../tools/askHumanForHelpTool");
-const projectManagementTools_1 = require("../tools/projectManagementTools");
-const searchTools_1 = require("../tools/searchTools");
-const scrapingTools_1 = require("../tools/scrapingTools"); // Added advancedScrapeTool
-// --- LLM and Tool Configuration ---
-const llm = new google_genai_1.ChatGoogleGenerativeAI({
-    model: "gemini-2.5-pro-preview-05-06",
-    temperature: 0,
-    safetySettings: [
-        { category: generative_ai_1.HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: generative_ai_1.HarmBlockThreshold.BLOCK_NONE },
-        { category: generative_ai_1.HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: generative_ai_1.HarmBlockThreshold.BLOCK_NONE },
-        { category: generative_ai_1.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: generative_ai_1.HarmBlockThreshold.BLOCK_NONE },
-        { category: generative_ai_1.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: generative_ai_1.HarmBlockThreshold.BLOCK_NONE },
-    ],
-});
-const tools = [
-    listFilesTool_1.listFilesTool,
-    readFilesTool_1.readFilesTool,
-    writeFileTool_1.writeFileTool,
-    createFileTool_1.createFileTool,
-    runTestCommandTool_1.runTestCommandTool,
-    getCurrentDirectoryTool_1.getCurrentDirectoryTool,
-    findAndReplaceInFileTool_1.findAndReplaceInFileTool,
-    askHumanForHelpTool_1.askHumanForHelpTool,
-    projectManagementTools_1.createSprintTool,
-    projectManagementTools_1.createTaskTool,
-    searchTools_1.tavilySearchTool,
-    scrapingTools_1.basicPuppeteerScrapeTool,
-    scrapingTools_1.advancedScrapeTool, // Added advancedScrapeTool
+// FIX: This list now ONLY contains tools that perform direct, verifiable file I/O.
+const fileSystemWriteTools = [
+    "writeFileTool",
+    "createFileTool",
+    "findAndReplaceInFileTool",
 ];
-const llmWithTools = llm.bindTools(tools);
-// --- System Prompt Definition ---
-const eiraSystemMessage = `
-You are Eira, a highly disciplined and autonomous AI software developer. Your goal is to complete coding tasks by strictly following the provided plan. You must use the provided tools to interact with the file system. NEVER invent file contents. You must read a file before you can modify it. Execute the steps of the plan ONE AT A TIME. Do not attempt to call multiple tools in a single step. After each action, reflect on the result and proceed to the next logical step in the plan. Always summarize your final actions and confirm when the overall goal is complete.
-Ensure to only output natural language responses in the cli to communcate with the user, and use the tools to perform actions. If you need to search for information, use the Tavily search tool or the Puppeteer scraping tool. If you encounter a situation where you cannot proceed, use the askHumanForHelp tool to get assistance.
-`;
-// This function encapsulates the creation of the agent and executor
-function createAgentExecutor() {
-    const prompt = prompts_1.ChatPromptTemplate.fromMessages([
-        ["system", eiraSystemMessage],
-        new prompts_1.MessagesPlaceholder("chat_history"),
-        ["human", "{input}"],
-        new prompts_1.MessagesPlaceholder("agent_scratchpad"),
-    ]);
-    const agent = (0, agents_1.createToolCallingAgent)({
-        llm: llmWithTools,
-        tools,
-        prompt,
-    });
-    return new agents_1.AgentExecutor({
-        agent,
-        tools,
-        verbose: true,
-    });
-}
-// --- Main EiraAgent Class ---
-class EiraAgent {
-    agentExecutor;
-    constructor(executor) {
-        this.agentExecutor = executor;
+const agentNode = async (state) => {
+    const agent = (0, eira_1.getAgent)();
+    const response = await agent.invoke({ messages: state.messages });
+    return { messages: [response] };
+};
+const customToolsNode = async (state) => {
+    const { messages } = state;
+    const lastAiMessage = [...messages]
+        .reverse()
+        .find((m) => m instanceof messages_1.AIMessage);
+    if (!lastAiMessage || !lastAiMessage.tool_calls) {
+        throw new Error("No tool calls found in the last AI message.");
     }
-    // A static factory method for creating an instance of the agent
-    static create() {
-        const executor = createAgentExecutor();
-        return new EiraAgent(executor);
-    }
-    // The run method now correctly accepts chat history
-    async run(instruction, chatHistory) {
-        if (!this.agentExecutor) {
-            throw new Error("Agent executor not initialized.");
+    const toolExecutionResults = [];
+    const toolsByName = Object.fromEntries(tools_1.allTools.map(tool => [tool.name, tool]));
+    for (const toolCall of lastAiMessage.tool_calls) {
+        if (!toolCall.id) {
+            console.error(`Tool call '${toolCall.name}' is missing an ID. Skipping.`);
+            continue;
         }
-        // Ensure the input is not empty
-        const processedInstruction = (instruction && instruction.trim() !== "") ? instruction : "(No specific instruction provided)";
-        const response = await this.agentExecutor.invoke({
-            input: processedInstruction,
-            chat_history: chatHistory,
-        });
-        return response;
+        const tool = toolsByName[toolCall.name];
+        if (!tool) {
+            toolExecutionResults.push(new messages_1.ToolMessage({
+                content: `Error: Tool '${toolCall.name}' not found.`,
+                tool_call_id: toolCall.id,
+            }));
+            continue;
+        }
+        let toolOutput;
+        try {
+            const observation = await tool.invoke(toolCall.args);
+            toolOutput = `Tool '${toolCall.name}' executed successfully. Direct output: ${observation}`;
+        }
+        catch (e) {
+            toolOutput = `Error executing tool '${toolCall.name}': ${e.message}`;
+        }
+        // --- Start of Integrated Verification Logic ---
+        let verificationReport = '';
+        // FIX: The verification logic now only triggers for the tools in our specific list.
+        if (fileSystemWriteTools.includes(toolCall.name)) {
+            const filePath = toolCall.args.filePath;
+            if (typeof filePath !== 'string') {
+                verificationReport = 'Verification skipped: No filePath provided.';
+            }
+            else {
+                let expectedContent;
+                if (toolCall.name === 'writeFileTool' || toolCall.name === 'createFileTool') {
+                    expectedContent = toolCall.args.content;
+                }
+                else if (toolCall.name === 'findAndReplaceInFileTool') {
+                    expectedContent = toolCall.args.replace;
+                }
+                try {
+                    const readResult = await readFilesTool_1.readFilesTool.invoke({ filePaths: [filePath] });
+                    if (typeof expectedContent === 'string' && expectedContent.trim() !== '') {
+                        if (readResult.includes(expectedContent)) {
+                            verificationReport = `DEEP_VERIFICATION_SUCCESS: Verified that the expected content is present in '${filePath}'.`;
+                        }
+                        else {
+                            verificationReport = `DEEP_VERIFICATION_FAILURE: The expected content was NOT found in '${filePath}'. The file content is:\n${readResult}`;
+                        }
+                    }
+                    else {
+                        verificationReport = `SHALLOW_VERIFICATION_SUCCESS: Verified that '${filePath}' is readable.`;
+                    }
+                }
+                catch (e) {
+                    verificationReport = `VERIFICATION_ERROR: An unexpected error occurred while trying to read '${filePath}' for verification.`;
+                }
+            }
+        }
+        // --- End of Integrated Verification Logic ---
+        const finalContent = verificationReport
+            ? `${toolOutput}\n---Verification Result---\n${verificationReport}`
+            : toolOutput;
+        toolExecutionResults.push(new messages_1.ToolMessage({
+            content: finalContent,
+            tool_call_id: toolCall.id,
+        }));
+    }
+    return { messages: toolExecutionResults };
+};
+const shouldCallTools = (state) => {
+    const lastMessage = state.messages[state.messages.length - 1];
+    if (!(lastMessage instanceof messages_1.AIMessage) || !lastMessage.tool_calls?.length) {
+        return langgraph_1.END;
+    }
+    return "tools";
+};
+const workflow = new langgraph_1.StateGraph(eira_1.AgentStateSchema)
+    .addNode("agent", agentNode)
+    .addNode("tools", customToolsNode);
+workflow.addEdge(langgraph_1.START, "agent");
+workflow.addConditionalEdges("agent", shouldCallTools, {
+    tools: "tools",
+    [langgraph_1.END]: langgraph_1.END,
+});
+workflow.addEdge("tools", "agent");
+exports.graph = workflow.compile();
+class EiraAgent {
+    graph = exports.graph;
+    static create() {
+        return new EiraAgent();
+    }
+    async run(userInput, chatHistory) {
+        if (!userInput || userInput.trim() === '') {
+            throw new Error("Empty user input");
+        }
+        const initialMessages = [...chatHistory, new messages_2.HumanMessage(userInput)];
+        const result = await this.invoke({ messages: initialMessages });
+        return result.messages;
+    }
+    async invoke(input) {
+        if (!input.messages || input.messages.length === 0) {
+            throw new Error("No messages provided to agent");
+        }
+        return this.graph.invoke(input);
     }
 }
 exports.EiraAgent = EiraAgent;

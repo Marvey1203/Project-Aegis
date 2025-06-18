@@ -1,29 +1,35 @@
 "use strict";
+// src/tools/index.ts
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.askHumanForHelpTool = exports.writeFileTool = exports.runTestCommandTool = exports.readFilesTool = exports.listFilesTool = exports.getCurrentDirectoryTool = exports.findAndReplaceInFileTool = exports.createFileTool = exports.allTools = void 0;
-const createFileTool_1 = require("./createFileTool");
-Object.defineProperty(exports, "createFileTool", { enumerable: true, get: function () { return createFileTool_1.createFileTool; } });
+exports.allTools = void 0;
+const searchTools_1 = require("./searchTools");
+const dateTimeTools_1 = require("./dateTimeTools");
 const findAndReplaceInFileTool_1 = require("./findAndReplaceInFileTool");
-Object.defineProperty(exports, "findAndReplaceInFileTool", { enumerable: true, get: function () { return findAndReplaceInFileTool_1.findAndReplaceInFileTool; } });
-const getCurrentDirectoryTool_1 = require("./getCurrentDirectoryTool");
-Object.defineProperty(exports, "getCurrentDirectoryTool", { enumerable: true, get: function () { return getCurrentDirectoryTool_1.getCurrentDirectoryTool; } });
+const knowledgeBaseTools_1 = require("./knowledgeBaseTools");
+const projectManagementTools_1 = require("./projectManagementTools");
+const scrapingTools_1 = require("./scrapingTools");
+const askHumanForHelpTool_1 = require("./askHumanForHelpTool");
+const createFileTool_1 = require("./createFileTool");
 const listFilesTool_1 = require("./listFilesTool");
-Object.defineProperty(exports, "listFilesTool", { enumerable: true, get: function () { return listFilesTool_1.listFilesTool; } });
 const readFilesTool_1 = require("./readFilesTool");
-Object.defineProperty(exports, "readFilesTool", { enumerable: true, get: function () { return readFilesTool_1.readFilesTool; } });
-const runTestCommandTool_1 = require("./runTestCommandTool");
-Object.defineProperty(exports, "runTestCommandTool", { enumerable: true, get: function () { return runTestCommandTool_1.runTestCommandTool; } });
 const writeFileTool_1 = require("./writeFileTool");
-Object.defineProperty(exports, "writeFileTool", { enumerable: true, get: function () { return writeFileTool_1.writeFileTool; } });
-const askHumanForHelpTool_1 = require("./askHumanForHelpTool"); // Added import
-Object.defineProperty(exports, "askHumanForHelpTool", { enumerable: true, get: function () { return askHumanForHelpTool_1.askHumanForHelpTool; } });
+const summarizeAndArchiveChatHistoryTool_1 = require("./summarizeAndArchiveChatHistoryTool");
+const lintingTool_1 = require("./lintingTool");
 exports.allTools = [
-    createFileTool_1.createFileTool,
+    searchTools_1.tavilySearchTool,
+    dateTimeTools_1.getCurrentTimestampTool,
     findAndReplaceInFileTool_1.findAndReplaceInFileTool,
-    getCurrentDirectoryTool_1.getCurrentDirectoryTool,
+    knowledgeBaseTools_1.addKnowledgeBaseEntryTool,
+    projectManagementTools_1.createProjectTool,
+    projectManagementTools_1.createSprintTool,
+    projectManagementTools_1.createTaskTool,
+    scrapingTools_1.basicPuppeteerScrapeTool,
+    scrapingTools_1.advancedScrapeTool,
+    askHumanForHelpTool_1.askHumanForHelpTool,
+    createFileTool_1.createFileTool,
     listFilesTool_1.listFilesTool,
     readFilesTool_1.readFilesTool,
-    runTestCommandTool_1.runTestCommandTool,
     writeFileTool_1.writeFileTool,
-    askHumanForHelpTool_1.askHumanForHelpTool, // Added tool
+    summarizeAndArchiveChatHistoryTool_1.summarizeAndArchiveChatHistoryTool,
+    lintingTool_1.lintingTool,
 ];

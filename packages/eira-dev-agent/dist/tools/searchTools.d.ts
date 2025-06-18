@@ -1,2 +1,2 @@
-import { TavilySearch } from "@langchain/tavily";
-export declare const tavilySearchTool: TavilySearch;
+import { Tool } from "langchain/tools";
+export declare const tavilySearchTool: Tool;

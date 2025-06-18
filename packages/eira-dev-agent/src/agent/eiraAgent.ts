@@ -1,108 +1,153 @@
-import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
-import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
-import { HumanMessage, AIMessage } from '@langchain/core/messages';
+// src/agent/eiraAgent.ts
 
-// Import all tools
-import { listFilesTool } from '../tools/listFilesTool';
-import { readFilesTool } from '../tools/readFilesTool';
-import { writeFileTool } from '../tools/writeFileTool';
-import { createFileTool } from '../tools/createFileTool';
-import { runTestCommandTool } from '../tools/runTestCommandTool';
-import { getCurrentDirectoryTool } from '../tools/getCurrentDirectoryTool';
-import { findAndReplaceInFileTool } from '../tools/findAndReplaceInFileTool';
-import { askHumanForHelpTool } from '../tools/askHumanForHelpTool';
-import { createSprintTool, createTaskTool } from '../tools/projectManagementTools';
-import { tavilySearchTool } from "../tools/searchTools";
-import { basicPuppeteerScrapeTool, advancedScrapeTool } from "../tools/scrapingTools"; // Added advancedScrapeTool
+import { AgentStateSchema, AgentState, getAgent } from "./eira";
+import { StateGraph, START, END } from "@langchain/langgraph";
+import { BaseMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
+import { allTools as tools } from "../tools";
+import { HumanMessage } from "@langchain/core/messages";
+import { readFilesTool } from "../tools/readFilesTool";
 
-// --- LLM and Tool Configuration ---
-const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.5-pro-preview-05-06",
-  temperature: 0,
-  safetySettings: [
-    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-  ],
-});
-
-const tools = [
-  listFilesTool,
-  readFilesTool,
-  writeFileTool,
-  createFileTool,
-  runTestCommandTool,
-  getCurrentDirectoryTool,
-  findAndReplaceInFileTool,
-  askHumanForHelpTool,
-  createSprintTool,
-  createTaskTool,
-  tavilySearchTool,
-  basicPuppeteerScrapeTool,
-  advancedScrapeTool, // Added advancedScrapeTool
+// FIX: This list now ONLY contains tools that perform direct, verifiable file I/O.
+const fileSystemWriteTools = [
+  "writeFileTool",
+  "createFileTool",
+  "findAndReplaceInFileTool",
 ];
 
-const llmWithTools = llm.bindTools(tools);
+const agentNode = async (state: AgentState) => {
+  const agent = getAgent();
+  const response = await agent.invoke({ messages: state.messages });
+  return { messages: [response] };
+};
 
-// --- System Prompt Definition ---
-const eiraSystemMessage = `
-You are Eira, a highly disciplined and autonomous AI software developer. Your goal is to complete coding tasks by strictly following the provided plan. You must use the provided tools to interact with the file system. NEVER invent file contents. You must read a file before you can modify it. Execute the steps of the plan ONE AT A TIME. Do not attempt to call multiple tools in a single step. After each action, reflect on the result and proceed to the next logical step in the plan. Always summarize your final actions and confirm when the overall goal is complete.
-Ensure to only output natural language responses in the cli to communcate with the user, and use the tools to perform actions. If you need to search for information, use the Tavily search tool or the Puppeteer scraping tool. If you encounter a situation where you cannot proceed, use the askHumanForHelp tool to get assistance.
-`;
+const customToolsNode = async (state: AgentState): Promise<{ messages: ToolMessage[] }> => {
+  const { messages } = state;
+  const lastAiMessage = [...messages]
+    .reverse()
+    .find((m: BaseMessage): m is AIMessage => m instanceof AIMessage);
 
-// This function encapsulates the creation of the agent and executor
-function createAgentExecutor() {
-  const prompt = ChatPromptTemplate.fromMessages([
-    ["system", eiraSystemMessage],
-    new MessagesPlaceholder("chat_history"),
-    ["human", "{input}"],
-    new MessagesPlaceholder("agent_scratchpad"),
-  ]);
-
-  const agent = createToolCallingAgent({
-    llm: llmWithTools,
-    tools,
-    prompt,
-  });
-
-  return new AgentExecutor({
-    agent,
-    tools,
-    verbose: true,
-  });
-}
-
-// --- Main EiraAgent Class ---
-export class EiraAgent {
-  public agentExecutor: AgentExecutor;
-
-  private constructor(executor: AgentExecutor) {
-    this.agentExecutor = executor;
+  if (!lastAiMessage || !lastAiMessage.tool_calls) {
+    throw new Error("No tool calls found in the last AI message.");
   }
 
-  // A static factory method for creating an instance of the agent
-  static create() {
-    const executor = createAgentExecutor();
-    return new EiraAgent(executor);
-  }
+  const toolExecutionResults: ToolMessage[] = [];
+  const toolsByName = Object.fromEntries(tools.map(tool => [tool.name, tool]));
 
-  // The run method now correctly accepts chat history
-  async run(instruction: string, chatHistory: (HumanMessage | AIMessage)[]) {
-    if (!this.agentExecutor) {
-      throw new Error("Agent executor not initialized.");
+  for (const toolCall of lastAiMessage.tool_calls) {
+    if (!toolCall.id) {
+      console.error(`Tool call '${toolCall.name}' is missing an ID. Skipping.`);
+      continue;
     }
-    
-    // Ensure the input is not empty
-    const processedInstruction = (instruction && instruction.trim() !== "") ? instruction : "(No specific instruction provided)";
 
-    const response = await this.agentExecutor.invoke({
-      input: processedInstruction,
-      chat_history: chatHistory,
-    });
+    const tool = toolsByName[toolCall.name];
+    if (!tool) {
+      toolExecutionResults.push(new ToolMessage({
+        content: `Error: Tool '${toolCall.name}' not found.`,
+        tool_call_id: toolCall.id,
+      }));
+      continue;
+    }
 
-    return response;
+    let toolOutput: string;
+    try {
+      const observation = await (tool as any).invoke(toolCall.args);
+      toolOutput = `Tool '${toolCall.name}' executed successfully. Direct output: ${observation}`;
+    } catch (e: any) {
+      toolOutput = `Error executing tool '${toolCall.name}': ${e.message}`;
+    }
+
+    // --- Start of Integrated Verification Logic ---
+    let verificationReport = '';
+    // FIX: The verification logic now only triggers for the tools in our specific list.
+    if (fileSystemWriteTools.includes(toolCall.name)) {
+      const filePath = (toolCall.args as any).filePath;
+      if (typeof filePath !== 'string') {
+        verificationReport = 'Verification skipped: No filePath provided.';
+      } else {
+        let expectedContent: string | undefined;
+        if (toolCall.name === 'writeFileTool' || toolCall.name === 'createFileTool') {
+          expectedContent = (toolCall.args as any).content;
+        } else if (toolCall.name === 'findAndReplaceInFileTool') {
+          expectedContent = (toolCall.args as any).replace;
+        }
+        
+        try {
+          const readResult = await readFilesTool.invoke({ filePaths: [filePath] });
+
+          if (typeof expectedContent === 'string' && expectedContent.trim() !== '') {
+            if (readResult.includes(expectedContent)) {
+              verificationReport = `DEEP_VERIFICATION_SUCCESS: Verified that the expected content is present in '${filePath}'.`;
+            } else {
+              verificationReport = `DEEP_VERIFICATION_FAILURE: The expected content was NOT found in '${filePath}'. The file content is:\n${readResult}`;
+            }
+          } else {
+            verificationReport = `SHALLOW_VERIFICATION_SUCCESS: Verified that '${filePath}' is readable.`;
+          }
+        } catch (e: any) {
+          verificationReport = `VERIFICATION_ERROR: An unexpected error occurred while trying to read '${filePath}' for verification.`;
+        }
+      }
+    }
+    // --- End of Integrated Verification Logic ---
+
+    const finalContent = verificationReport 
+      ? `${toolOutput}\n---Verification Result---\n${verificationReport}`
+      : toolOutput;
+      
+    toolExecutionResults.push(new ToolMessage({
+      content: finalContent,
+      tool_call_id: toolCall.id,
+    }));
+  }
+
+  return { messages: toolExecutionResults };
+};
+
+
+const shouldCallTools = (state: AgentState) => {
+  const lastMessage = state.messages[state.messages.length - 1];
+  if (!(lastMessage instanceof AIMessage) || !lastMessage.tool_calls?.length) {
+    return END;
+  }
+  return "tools";
+};
+
+const workflow = new StateGraph(AgentStateSchema)
+  .addNode("agent", agentNode)
+  .addNode("tools", customToolsNode);
+
+workflow.addEdge(START, "agent");
+
+workflow.addConditionalEdges("agent", shouldCallTools, {
+  tools: "tools",
+  [END]: END,
+});
+workflow.addEdge("tools", "agent");
+
+export const graph = workflow.compile();
+
+export class EiraAgent {
+  private graph = graph;
+
+  static create() {
+    return new EiraAgent();
+  }
+  
+  async run(userInput: string, chatHistory: BaseMessage[]): Promise<BaseMessage[]> {
+    if (!userInput || userInput.trim() === '') {
+      throw new Error("Empty user input");
+    }
+
+    const initialMessages = [...chatHistory, new HumanMessage(userInput)];
+    const result = await this.invoke({ messages: initialMessages });
+
+    return result.messages;
+  }
+
+  private async invoke(input: { messages: BaseMessage[] }) {
+    if (!input.messages || input.messages.length === 0) {
+      throw new Error("No messages provided to agent");
+    }
+    return this.graph.invoke(input);
   }
 }

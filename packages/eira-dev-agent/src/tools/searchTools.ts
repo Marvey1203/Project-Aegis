@@ -1,4 +1,5 @@
 import { TavilySearch } from "@langchain/tavily";
+import { Tool } from "langchain/tools";
 
 if (!process.env.TAVILY_API_KEY) {
   console.warn(
@@ -11,4 +12,4 @@ export const tavilySearchTool = new TavilySearch({
   description:
     "A search engine tool powered by Tavily. Useful for when you need to answer questions about current events, find up-to-date information, or perform general web research. Input should be a clear search query.",
   maxResults: 3,
-});
+}) as unknown as Tool;

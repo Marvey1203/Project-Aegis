@@ -1,37 +1,31 @@
-import { promises as fs } from "fs";
-import path from "path";
+// src/tools/listFilesTool.ts
+
 import { z } from "zod";
 import { DynamicStructuredTool } from "@langchain/core/tools";
-import { resolveToolPath } from "./path-resolver";
+import axios from 'axios';
 
 const schema = z.object({
-  directoryPath: z.string().describe("The relative path of the directory to inspect (e.g., 'core/src')."),
+  directoryPath: z.string().describe("The relative path of the directory to inspect (e.g., 'src/' or '.'). Defaults to the current directory if empty."),
 });
-
-async function logic({ directoryPath }: z.infer<typeof schema>): Promise<string> {
-  try {
-    const resolvedPath = resolveToolPath(directoryPath);
-    async function generateFileTree(dir: string, indent: string): Promise<string> {
-      const entries = await fs.readdir(dir, { withFileTypes: true });
-      let tree = "";
-      for (const entry of entries) {
-        if (entry.name === 'node_modules' || entry.name === '.next' || entry.name === '.git') continue;
-        tree += `${indent}├── ${entry.name}\n`;
-        if (entry.isDirectory()) {
-          tree += await generateFileTree(path.join(dir, entry.name), `${indent}│   `);
-        }
-      }
-      return tree;
-    }
-    return await generateFileTree(resolvedPath, "") || "Directory is empty.";
-  } catch (err) {
-    return `Error listing files: ${err instanceof Error ? err.message : String(err)}`;
-  }
-}
 
 export const listFilesTool = new DynamicStructuredTool({
   name: "listFilesTool",
-  description: "Recursively lists all files and subdirectories within a given directory path.",
+  description: "Lists all files and subdirectories within a given directory path via the Eira file server.",
   schema,
-  func: logic,
+  func: async ({ directoryPath }) => {
+    const serverUrl = 'http://localhost:3001/api/listFiles';
+    try {
+        const response = await axios.post(serverUrl, { directoryPath });
+        if (response.data.success) {
+            return response.data.files.join('\n') || "Directory is empty.";
+        } else {
+            return `Error from file server: ${response.data.error}`;
+        }
+    } catch (error: any) {
+        if (axios.isAxiosError(error) && error.response) {
+            return `Error from file server: ${error.response.data.error || error.message}`;
+        }
+        return `Failed to connect to Eira file server at ${serverUrl}. Is it running?`;
+    }
+  },
 });

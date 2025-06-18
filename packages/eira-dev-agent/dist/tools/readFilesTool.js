@@ -1,29 +1,42 @@
 "use strict";
+// src/tools/readFilesTool.ts
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.readFilesTool = void 0;
-const fs_1 = require("fs");
 const zod_1 = require("zod");
 const tools_1 = require("@langchain/core/tools");
-const path_resolver_1 = require("./path-resolver");
-const schema = zod_1.z.object({
-    filePaths: zod_1.z.array(zod_1.z.string()).describe("An array of relative paths to files to read."),
+const axios_1 = __importDefault(require("axios"));
+const readFilesSchema = zod_1.z.object({
+    filePaths: zod_1.z
+        .array(zod_1.z.string())
+        .describe("An array of relative paths to files to read."),
 });
-async function logic({ filePaths }) {
-    const contents = await Promise.all(filePaths.map(async (filePath) => {
-        try {
-            const resolvedPath = (0, path_resolver_1.resolveToolPath)(filePath);
-            const content = await fs_1.promises.readFile(resolvedPath, "utf-8");
-            return `--- FILE: ${filePath} ---\n${content}\n--- END OF FILE: ${filePath} ---`;
-        }
-        catch (err) {
-            return `--- ERROR READING FILE: ${filePath} ---\n${err instanceof Error ? err.message : String(err)}`;
-        }
-    }));
-    return contents.join("\n\n");
-}
 exports.readFilesTool = new tools_1.DynamicStructuredTool({
     name: "readFilesTool",
-    description: "Reads the contents of multiple files from a list of paths.",
-    schema,
-    func: logic,
+    description: "Reads the contents of one or more files from the local file system via the Eira file server.",
+    schema: readFilesSchema,
+    func: async ({ filePaths }) => {
+        const serverUrl = "http://localhost:3001/api/readFiles";
+        try {
+            // The server now handles multiple files in one call
+            const response = await axios_1.default.post(serverUrl, { filePaths });
+            if (response.data.success) {
+                // Format the response from the server which contains an array of file contents
+                return response.data.files
+                    .map((file) => `--- FILE: ${file.filePath} ---\n${file.content}\n--- END OF FILE: ${file.filePath} ---`)
+                    .join("\n\n");
+            }
+            else {
+                return `Error from file server: ${response.data.error}`;
+            }
+        }
+        catch (error) {
+            if (axios_1.default.isAxiosError(error) && error.response) {
+                return `Error from file server: ${error.response.data.error || error.message}`;
+            }
+            return `Failed to connect to Eira file server at ${serverUrl}. Is it running?`;
+        }
+    },
 });

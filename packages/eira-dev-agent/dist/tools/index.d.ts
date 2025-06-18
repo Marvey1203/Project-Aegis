@@ -1,112 +1,236 @@
-import { createFileTool } from './createFileTool';
-import { findAndReplaceInFileTool } from './findAndReplaceInFileTool';
-import { getCurrentDirectoryTool } from './getCurrentDirectoryTool';
-import { listFilesTool } from './listFilesTool';
-import { readFilesTool } from './readFilesTool';
-import { runTestCommandTool } from './runTestCommandTool';
-import { writeFileTool } from './writeFileTool';
-import { askHumanForHelpTool } from './askHumanForHelpTool';
-export declare const allTools: (import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{
+export declare const allTools: (import("langchain/tools").Tool<any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
     filePath: import("zod").ZodString;
-    replacementString: import("zod").ZodString;
-    searchString: import("zod").ZodOptional<import("zod").ZodString>;
-    isRegex: import("zod").ZodDefault<import("zod").ZodOptional<import("zod").ZodBoolean>>;
-    regexFlags: import("zod").ZodDefault<import("zod").ZodOptional<import("zod").ZodString>>;
-    jsonPathExpression: import("zod").ZodOptional<import("zod").ZodString>;
-    replacementValueType: import("zod").ZodDefault<import("zod").ZodOptional<import("zod").ZodEnum<["string", "number", "boolean", "object", "array"]>>>;
+    find: import("zod").ZodString;
+    replace: import("zod").ZodString;
 }, "strip", import("zod").ZodTypeAny, {
+    find: string;
     filePath: string;
-    replacementString: string;
-    isRegex: boolean;
-    regexFlags: string;
-    replacementValueType: "string" | "number" | "boolean" | "object" | "array";
-    searchString?: string | undefined;
-    jsonPathExpression?: string | undefined;
+    replace: string;
 }, {
+    find: string;
     filePath: string;
-    replacementString: string;
-    searchString?: string | undefined;
-    isRegex?: boolean | undefined;
-    regexFlags?: string | undefined;
-    jsonPathExpression?: string | undefined;
-    replacementValueType?: "string" | "number" | "boolean" | "object" | "array" | undefined;
+    replace: string;
 }>, {
+    find: string;
     filePath: string;
-    replacementString: string;
-    isRegex: boolean;
-    regexFlags: string;
-    replacementValueType: "string" | "number" | "boolean" | "object" | "array";
-    searchString?: string | undefined;
-    jsonPathExpression?: string | undefined;
+    replace: string;
 }, {
+    find: string;
     filePath: string;
-    replacementString: string;
-    searchString?: string | undefined;
-    isRegex?: boolean | undefined;
-    regexFlags?: string | undefined;
-    jsonPathExpression?: string | undefined;
-    replacementValueType?: "string" | "number" | "boolean" | "object" | "array" | undefined;
-}, string> | import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{
-    filePath: import("zod").ZodString;
-    content: import("zod").ZodOptional<import("zod").ZodString>;
+    replace: string;
+}, any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    category: import("zod").ZodString;
+    title: import("zod").ZodString;
+    content: import("zod").ZodAny;
+    tags: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
 }, "strip", import("zod").ZodTypeAny, {
-    filePath: string;
-    content?: string | undefined;
+    category: string;
+    title: string;
+    content?: any;
+    tags?: string[] | undefined;
 }, {
-    filePath: string;
-    content?: string | undefined;
+    category: string;
+    title: string;
+    content?: any;
+    tags?: string[] | undefined;
 }>, {
-    filePath: string;
-    content?: string | undefined;
+    category: string;
+    title: string;
+    content?: any;
+    tags?: string[] | undefined;
 }, {
-    filePath: string;
-    content?: string | undefined;
-}, string> | import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{}, "strip", import("zod").ZodTypeAny, {}, {}>, {}, {}, string> | import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{
-    directoryPath: import("zod").ZodString;
+    category: string;
+    title: string;
+    content?: any;
+    tags?: string[] | undefined;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    projectName: import("zod").ZodString;
+    projectId: import("zod").ZodOptional<import("zod").ZodString>;
+    projectDescription: import("zod").ZodOptional<import("zod").ZodString>;
+    makeActiveProject: import("zod").ZodDefault<import("zod").ZodBoolean>;
 }, "strip", import("zod").ZodTypeAny, {
-    directoryPath: string;
+    projectName: string;
+    makeActiveProject: boolean;
+    projectId?: string | undefined;
+    projectDescription?: string | undefined;
 }, {
-    directoryPath: string;
+    projectName: string;
+    projectId?: string | undefined;
+    projectDescription?: string | undefined;
+    makeActiveProject?: boolean | undefined;
 }>, {
-    directoryPath: string;
+    projectName: string;
+    makeActiveProject: boolean;
+    projectId?: string | undefined;
+    projectDescription?: string | undefined;
 }, {
-    directoryPath: string;
-}, string> | import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{
-    filePaths: import("zod").ZodArray<import("zod").ZodString, "many">;
+    projectName: string;
+    projectId?: string | undefined;
+    projectDescription?: string | undefined;
+    makeActiveProject?: boolean | undefined;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    projectId: import("zod").ZodString;
+    sprintGoal: import("zod").ZodString;
 }, "strip", import("zod").ZodTypeAny, {
-    filePaths: string[];
+    projectId: string;
+    sprintGoal: string;
 }, {
-    filePaths: string[];
+    projectId: string;
+    sprintGoal: string;
 }>, {
-    filePaths: string[];
+    projectId: string;
+    sprintGoal: string;
 }, {
-    filePaths: string[];
-}, string> | import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{
-    command: import("zod").ZodOptional<import("zod").ZodString>;
+    projectId: string;
+    sprintGoal: string;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    projectId: import("zod").ZodString;
+    sprintId: import("zod").ZodString;
+    taskDescription: import("zod").ZodString;
 }, "strip", import("zod").ZodTypeAny, {
-    command?: string | undefined;
+    projectId: string;
+    sprintId: string;
+    taskDescription: string;
 }, {
-    command?: string | undefined;
+    projectId: string;
+    sprintId: string;
+    taskDescription: string;
 }>, {
-    command?: string | undefined;
+    projectId: string;
+    sprintId: string;
+    taskDescription: string;
 }, {
-    command?: string | undefined;
-}, string> | import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{
-    filePath: import("zod").ZodString;
-    content: import("zod").ZodString;
+    projectId: string;
+    sprintId: string;
+    taskDescription: string;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    url: import("zod").ZodString;
+    waitForSelector: import("zod").ZodOptional<import("zod").ZodString>;
+    targetSelector: import("zod").ZodOptional<import("zod").ZodString>;
+    timeout: import("zod").ZodDefault<import("zod").ZodOptional<import("zod").ZodNumber>>;
 }, "strip", import("zod").ZodTypeAny, {
-    filePath: string;
-    content: string;
+    url: string;
+    timeout: number;
+    waitForSelector?: string | undefined;
+    targetSelector?: string | undefined;
 }, {
-    filePath: string;
-    content: string;
+    url: string;
+    waitForSelector?: string | undefined;
+    targetSelector?: string | undefined;
+    timeout?: number | undefined;
 }>, {
-    filePath: string;
-    content: string;
+    url: string;
+    timeout: number;
+    waitForSelector?: string | undefined;
+    targetSelector?: string | undefined;
 }, {
-    filePath: string;
-    content: string;
-}, string> | import("@langchain/core/tools", { with: { "resolution-mode": "import" } }).DynamicStructuredTool<import("zod").ZodObject<{
+    url: string;
+    waitForSelector?: string | undefined;
+    targetSelector?: string | undefined;
+    timeout?: number | undefined;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    url: import("zod").ZodString;
+    actions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodObject<{
+        actionType: import("zod").ZodEnum<["click", "type", "waitForSelector", "waitForTimeout", "selectOption", "scrollToElement", "focus"]>;
+        selector: import("zod").ZodOptional<import("zod").ZodString>;
+        textToType: import("zod").ZodOptional<import("zod").ZodString>;
+        valueToSelect: import("zod").ZodOptional<import("zod").ZodString>;
+        timeout: import("zod").ZodOptional<import("zod").ZodNumber>;
+    }, "strip", import("zod").ZodTypeAny, {
+        actionType: "type" | "waitForSelector" | "click" | "waitForTimeout" | "selectOption" | "scrollToElement" | "focus";
+        timeout?: number | undefined;
+        selector?: string | undefined;
+        textToType?: string | undefined;
+        valueToSelect?: string | undefined;
+    }, {
+        actionType: "type" | "waitForSelector" | "click" | "waitForTimeout" | "selectOption" | "scrollToElement" | "focus";
+        timeout?: number | undefined;
+        selector?: string | undefined;
+        textToType?: string | undefined;
+        valueToSelect?: string | undefined;
+    }>, "many">>;
+    extractions: import("zod").ZodArray<import("zod").ZodObject<{
+        name: import("zod").ZodString;
+        selector: import("zod").ZodString;
+        extractType: import("zod").ZodDefault<import("zod").ZodEnum<["text", "html", "attribute", "count", "list_text", "list_html", "list_attribute"]>>;
+        attributeName: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strip", import("zod").ZodTypeAny, {
+        selector: string;
+        name: string;
+        extractType: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
+        attributeName?: string | undefined;
+    }, {
+        selector: string;
+        name: string;
+        extractType?: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
+        attributeName?: string | undefined;
+    }>, "many">;
+    globalTimeout: import("zod").ZodDefault<import("zod").ZodOptional<import("zod").ZodNumber>>;
+}, "strip", import("zod").ZodTypeAny, {
+    url: string;
+    extractions: {
+        selector: string;
+        name: string;
+        extractType: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
+        attributeName?: string | undefined;
+    }[];
+    globalTimeout: number;
+    actions?: {
+        actionType: "type" | "waitForSelector" | "click" | "waitForTimeout" | "selectOption" | "scrollToElement" | "focus";
+        timeout?: number | undefined;
+        selector?: string | undefined;
+        textToType?: string | undefined;
+        valueToSelect?: string | undefined;
+    }[] | undefined;
+}, {
+    url: string;
+    extractions: {
+        selector: string;
+        name: string;
+        extractType?: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
+        attributeName?: string | undefined;
+    }[];
+    actions?: {
+        actionType: "type" | "waitForSelector" | "click" | "waitForTimeout" | "selectOption" | "scrollToElement" | "focus";
+        timeout?: number | undefined;
+        selector?: string | undefined;
+        textToType?: string | undefined;
+        valueToSelect?: string | undefined;
+    }[] | undefined;
+    globalTimeout?: number | undefined;
+}>, {
+    url: string;
+    extractions: {
+        selector: string;
+        name: string;
+        extractType: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
+        attributeName?: string | undefined;
+    }[];
+    globalTimeout: number;
+    actions?: {
+        actionType: "type" | "waitForSelector" | "click" | "waitForTimeout" | "selectOption" | "scrollToElement" | "focus";
+        timeout?: number | undefined;
+        selector?: string | undefined;
+        textToType?: string | undefined;
+        valueToSelect?: string | undefined;
+    }[] | undefined;
+}, {
+    url: string;
+    extractions: {
+        selector: string;
+        name: string;
+        extractType?: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
+        attributeName?: string | undefined;
+    }[];
+    actions?: {
+        actionType: "type" | "waitForSelector" | "click" | "waitForTimeout" | "selectOption" | "scrollToElement" | "focus";
+        timeout?: number | undefined;
+        selector?: string | undefined;
+        textToType?: string | undefined;
+        valueToSelect?: string | undefined;
+    }[] | undefined;
+    globalTimeout?: number | undefined;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
     question: import("zod").ZodString;
     context: import("zod").ZodOptional<import("zod").ZodString>;
 }, "strip", import("zod").ZodTypeAny, {
@@ -121,5 +245,54 @@ export declare const allTools: (import("@langchain/core/tools", { with: { "resol
 }, {
     question: string;
     context?: string | undefined;
-}, string>)[];
-export { createFileTool, findAndReplaceInFileTool, getCurrentDirectoryTool, listFilesTool, readFilesTool, runTestCommandTool, writeFileTool, askHumanForHelpTool, };
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    filePath: import("zod").ZodString;
+    content: import("zod").ZodOptional<import("zod").ZodString>;
+}, "strip", import("zod").ZodTypeAny, {
+    filePath: string;
+    content?: string | undefined;
+}, {
+    filePath: string;
+    content?: string | undefined;
+}>, {
+    filePath: string;
+    content?: string | undefined;
+}, {
+    filePath: string;
+    content?: string | undefined;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    directoryPath: import("zod").ZodString;
+}, "strip", import("zod").ZodTypeAny, {
+    directoryPath: string;
+}, {
+    directoryPath: string;
+}>, {
+    directoryPath: string;
+}, {
+    directoryPath: string;
+}, any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    filePaths: import("zod").ZodArray<import("zod").ZodString, "many">;
+}, "strip", import("zod").ZodTypeAny, {
+    filePaths: string[];
+}, {
+    filePaths: string[];
+}>, {
+    filePaths: string[];
+}, {
+    filePaths: string[];
+}, any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    filePath: import("zod").ZodString;
+    content: import("zod").ZodString;
+}, "strip", import("zod").ZodTypeAny, {
+    filePath: string;
+    content: string;
+}, {
+    filePath: string;
+    content: string;
+}>, {
+    filePath: string;
+    content: string;
+}, {
+    filePath: string;
+    content: string;
+}, any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{}, "strip", import("zod").ZodTypeAny, {}, {}>, {}, {}, string>)[];
