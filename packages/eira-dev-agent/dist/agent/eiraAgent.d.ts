@@ -3,7 +3,7 @@ export declare const graph: import("@langchain/langgraph").CompiledStateGraph<im
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
 }>, import("@langchain/langgraph").UpdateType<{
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
-}>, "__start__" | "agent" | "tools", {
+}>, "tools" | "__start__" | "agent", {
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
 }, {
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;

@@ -1,10 +1,11 @@
+
 // src/server.ts
 
 import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import cors from 'cors';
 import fs from 'fs/promises';
 import path from 'path';
-import { resolveToolPath, findProjectRoot } from './tools/path-resolver'; // Import findProjectRoot
+import { resolveToolPath, findProjectRoot } from './tools/path-resolver.js'; // Import findProjectRoot
 
 const app = express();
 const PORT = 3001;
@@ -33,7 +34,7 @@ app.get('/api/ping', (req, res) => {
   res.status(200).json({ message: 'pong' });
 });
 
-app.post('/api/listFiles', (async (req: Request<{}, {}, ListFilesRequestBody>, res: Response, next: NextFunction) => {
+app.post('/api/listFiles', (async (req: Request<object, object, ListFilesRequestBody>, res: Response, next: NextFunction) => {
   const { directoryPath } = req.body;
   
   if (typeof directoryPath !== 'string') {
@@ -78,7 +79,7 @@ app.post('/api/listFiles', (async (req: Request<{}, {}, ListFilesRequestBody>, r
 }) as RequestHandler);
 
 // The rest of the endpoints are correct and do not need changes.
-app.post('/api/readFiles', (async (req: Request<{}, {}, ReadFilesRequestBody>, res: Response, next: NextFunction) => {
+app.post('/api/readFiles', (async (req: Request<object, object, ReadFilesRequestBody>, res: Response, next: NextFunction) => {
   const { filePaths } = req.body;
 
   if (!Array.isArray(filePaths) || filePaths.length === 0) {
@@ -99,7 +100,7 @@ app.post('/api/readFiles', (async (req: Request<{}, {}, ReadFilesRequestBody>, r
   }
 }) as RequestHandler);
 
-app.post('/api/writeFile', (async (req: Request<{}, {}, WriteFileRequestBody>, res: Response, next: NextFunction) => {
+app.post('/api/writeFile', (async (req: Request<object, object, WriteFileRequestBody>, res: Response, next: NextFunction) => {
   const { filePath, content } = req.body;
 
   if (typeof filePath !== 'string' || typeof content !== 'string') {
@@ -115,7 +116,7 @@ app.post('/api/writeFile', (async (req: Request<{}, {}, WriteFileRequestBody>, r
   }
 }) as RequestHandler);
 
-app.post('/api/findAndReplace', (async (req: Request<{}, {}, FindAndReplaceRequestBody>, res: Response, next: NextFunction) => {
+app.post('/api/findAndReplace', (async (req: Request<object, object, FindAndReplaceRequestBody>, res: Response, next: NextFunction) => {
     const { filePath, find, replace } = req.body;
 
     if (typeof filePath !== 'string' || typeof find !== 'string' || typeof replace !== 'string') {
@@ -133,7 +134,7 @@ app.post('/api/findAndReplace', (async (req: Request<{}, {}, FindAndReplaceReque
     }
 }) as RequestHandler);
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   console.error('[Server] An unhandled error occurred:', err.message);
   res.status(500).json({ success: false, error: err.message || 'An internal server error occurred.' });
 });

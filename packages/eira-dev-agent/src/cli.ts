@@ -2,11 +2,11 @@
 
 // #!/usr/bin/env node
 import 'dotenv/config';
-import { EiraAgent } from './agent/eiraAgent';
+import { EiraAgent } from './agent/eiraAgent.js';
 import * as readline from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
 import { HumanMessage, AIMessage, BaseMessage } from '@langchain/core/messages';
-import { loadMemory, saveMemory } from './memoryUtils';
+import { loadMemory, saveMemory } from './memoryUtils.js';
 
 const memoryFilePath = 'eira_mid_term_memory.json';
 

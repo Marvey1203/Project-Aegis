@@ -71,38 +71,43 @@ export declare const allTools: (import("langchain/tools").Tool<any> | import("la
 }, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
     projectId: import("zod").ZodString;
     sprintGoal: import("zod").ZodString;
+    tasks: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
 }, "strip", import("zod").ZodTypeAny, {
     projectId: string;
     sprintGoal: string;
+    tasks?: string[] | undefined;
 }, {
     projectId: string;
     sprintGoal: string;
+    tasks?: string[] | undefined;
 }>, {
     projectId: string;
     sprintGoal: string;
+    tasks?: string[] | undefined;
 }, {
     projectId: string;
     sprintGoal: string;
+    tasks?: string[] | undefined;
 }, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
     projectId: import("zod").ZodString;
     sprintId: import("zod").ZodString;
-    taskDescription: import("zod").ZodString;
+    taskDescriptions: import("zod").ZodArray<import("zod").ZodString, "many">;
 }, "strip", import("zod").ZodTypeAny, {
     projectId: string;
     sprintId: string;
-    taskDescription: string;
+    taskDescriptions: string[];
 }, {
     projectId: string;
     sprintId: string;
-    taskDescription: string;
+    taskDescriptions: string[];
 }>, {
     projectId: string;
     sprintId: string;
-    taskDescription: string;
+    taskDescriptions: string[];
 }, {
     projectId: string;
     sprintId: string;
-    taskDescription: string;
+    taskDescriptions: string[];
 }, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
     url: import("zod").ZodString;
     waitForSelector: import("zod").ZodOptional<import("zod").ZodString>;
@@ -295,4 +300,49 @@ export declare const allTools: (import("langchain/tools").Tool<any> | import("la
 }, {
     filePath: string;
     content: string;
-}, any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{}, "strip", import("zod").ZodTypeAny, {}, {}>, {}, {}, string>)[];
+}, any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{}, "strip", import("zod").ZodTypeAny, {}, {}>, {}, {}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    projectId: import("zod").ZodString;
+    sprintId: import("zod").ZodString;
+    status: import("zod").ZodEnum<["planned", "active", "completed", "on-hold"]>;
+}, "strip", import("zod").ZodTypeAny, {
+    status: "planned" | "active" | "completed" | "on-hold";
+    projectId: string;
+    sprintId: string;
+}, {
+    status: "planned" | "active" | "completed" | "on-hold";
+    projectId: string;
+    sprintId: string;
+}>, {
+    status: "planned" | "active" | "completed" | "on-hold";
+    projectId: string;
+    sprintId: string;
+}, {
+    status: "planned" | "active" | "completed" | "on-hold";
+    projectId: string;
+    sprintId: string;
+}, string> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    projectId: import("zod").ZodString;
+    sprintId: import("zod").ZodString;
+    taskId: import("zod").ZodString;
+    status: import("zod").ZodEnum<["pending", "in-progress", "completed", "blocked", "deferred"]>;
+}, "strip", import("zod").ZodTypeAny, {
+    status: "deferred" | "completed" | "pending" | "in-progress" | "blocked";
+    projectId: string;
+    sprintId: string;
+    taskId: string;
+}, {
+    status: "deferred" | "completed" | "pending" | "in-progress" | "blocked";
+    projectId: string;
+    sprintId: string;
+    taskId: string;
+}>, {
+    status: "deferred" | "completed" | "pending" | "in-progress" | "blocked";
+    projectId: string;
+    sprintId: string;
+    taskId: string;
+}, {
+    status: "deferred" | "completed" | "pending" | "in-progress" | "blocked";
+    projectId: string;
+    sprintId: string;
+    taskId: string;
+}, string>)[];

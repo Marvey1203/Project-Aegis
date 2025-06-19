@@ -1,13 +1,10 @@
-"use strict";
 // src/agent/eiraAgent.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EiraAgent = exports.graph = void 0;
-const eira_1 = require("./eira");
-const langgraph_1 = require("@langchain/langgraph");
-const messages_1 = require("@langchain/core/messages");
-const tools_1 = require("../tools");
-const messages_2 = require("@langchain/core/messages");
-const readFilesTool_1 = require("../tools/readFilesTool");
+import { AgentStateSchema, getAgent } from "./eira.js";
+import { StateGraph, START, END } from "@langchain/langgraph";
+import { AIMessage, ToolMessage } from "@langchain/core/messages";
+import { allTools as tools } from "../tools/index.js";
+import { HumanMessage } from "@langchain/core/messages";
+import { readFilesTool } from "../tools/readFilesTool.js";
 // FIX: This list now ONLY contains tools that perform direct, verifiable file I/O.
 const fileSystemWriteTools = [
     "writeFileTool",
@@ -15,7 +12,7 @@ const fileSystemWriteTools = [
     "findAndReplaceInFileTool",
 ];
 const agentNode = async (state) => {
-    const agent = (0, eira_1.getAgent)();
+    const agent = getAgent();
     const response = await agent.invoke({ messages: state.messages });
     return { messages: [response] };
 };
@@ -23,12 +20,12 @@ const customToolsNode = async (state) => {
     const { messages } = state;
     const lastAiMessage = [...messages]
         .reverse()
-        .find((m) => m instanceof messages_1.AIMessage);
+        .find((m) => m instanceof AIMessage);
     if (!lastAiMessage || !lastAiMessage.tool_calls) {
         throw new Error("No tool calls found in the last AI message.");
     }
     const toolExecutionResults = [];
-    const toolsByName = Object.fromEntries(tools_1.allTools.map(tool => [tool.name, tool]));
+    const toolsByName = Object.fromEntries(tools.map(tool => [tool.name, tool]));
     for (const toolCall of lastAiMessage.tool_calls) {
         if (!toolCall.id) {
             console.error(`Tool call '${toolCall.name}' is missing an ID. Skipping.`);
@@ -36,7 +33,7 @@ const customToolsNode = async (state) => {
         }
         const tool = toolsByName[toolCall.name];
         if (!tool) {
-            toolExecutionResults.push(new messages_1.ToolMessage({
+            toolExecutionResults.push(new ToolMessage({
                 content: `Error: Tool '${toolCall.name}' not found.`,
                 tool_call_id: toolCall.id,
             }));
@@ -67,7 +64,7 @@ const customToolsNode = async (state) => {
                     expectedContent = toolCall.args.replace;
                 }
                 try {
-                    const readResult = await readFilesTool_1.readFilesTool.invoke({ filePaths: [filePath] });
+                    const readResult = await readFilesTool.invoke({ filePaths: [filePath] });
                     if (typeof expectedContent === 'string' && expectedContent.trim() !== '') {
                         if (readResult.includes(expectedContent)) {
                             verificationReport = `DEEP_VERIFICATION_SUCCESS: Verified that the expected content is present in '${filePath}'.`;
@@ -89,7 +86,7 @@ const customToolsNode = async (state) => {
         const finalContent = verificationReport
             ? `${toolOutput}\n---Verification Result---\n${verificationReport}`
             : toolOutput;
-        toolExecutionResults.push(new messages_1.ToolMessage({
+        toolExecutionResults.push(new ToolMessage({
             content: finalContent,
             tool_call_id: toolCall.id,
         }));
@@ -98,23 +95,23 @@ const customToolsNode = async (state) => {
 };
 const shouldCallTools = (state) => {
     const lastMessage = state.messages[state.messages.length - 1];
-    if (!(lastMessage instanceof messages_1.AIMessage) || !lastMessage.tool_calls?.length) {
-        return langgraph_1.END;
+    if (!(lastMessage instanceof AIMessage) || !lastMessage.tool_calls?.length) {
+        return END;
     }
     return "tools";
 };
-const workflow = new langgraph_1.StateGraph(eira_1.AgentStateSchema)
+const workflow = new StateGraph(AgentStateSchema)
     .addNode("agent", agentNode)
     .addNode("tools", customToolsNode);
-workflow.addEdge(langgraph_1.START, "agent");
+workflow.addEdge(START, "agent");
 workflow.addConditionalEdges("agent", shouldCallTools, {
     tools: "tools",
-    [langgraph_1.END]: langgraph_1.END,
+    [END]: END,
 });
 workflow.addEdge("tools", "agent");
-exports.graph = workflow.compile();
-class EiraAgent {
-    graph = exports.graph;
+export const graph = workflow.compile();
+export class EiraAgent {
+    graph = graph;
     static create() {
         return new EiraAgent();
     }
@@ -122,7 +119,7 @@ class EiraAgent {
         if (!userInput || userInput.trim() === '') {
             throw new Error("Empty user input");
         }
-        const initialMessages = [...chatHistory, new messages_2.HumanMessage(userInput)];
+        const initialMessages = [...chatHistory, new HumanMessage(userInput)];
         const result = await this.invoke({ messages: initialMessages });
         return result.messages;
     }
@@ -133,4 +130,3 @@ class EiraAgent {
         return this.graph.invoke(input);
     }
 }
-exports.EiraAgent = EiraAgent;

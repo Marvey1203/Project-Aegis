@@ -5,19 +5,19 @@ export declare const findAndReplaceInFileTool: DynamicStructuredTool<z.ZodObject
     find: z.ZodString;
     replace: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    replace: string;
     find: string;
     filePath: string;
-    replace: string;
 }, {
+    replace: string;
     find: string;
     filePath: string;
-    replace: string;
 }>, {
+    replace: string;
     find: string;
     filePath: string;
-    replace: string;
 }, {
+    replace: string;
     find: string;
     filePath: string;
-    replace: string;
 }, any>;

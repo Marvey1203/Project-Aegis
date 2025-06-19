@@ -1,23 +1,17 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.advancedScrapeTool = exports.basicPuppeteerScrapeTool = void 0;
-const tools_1 = require("@langchain/core/tools");
-const zod_1 = require("zod");
-const puppeteer_1 = __importDefault(require("puppeteer"));
-const basicToolInputSchema = zod_1.z.object({
-    url: zod_1.z.string().describe("The URL of the web page to scrape."),
-    waitForSelector: zod_1.z.string().optional().describe("An optional CSS selector to wait for on the page before attempting to extract content. Useful for pages that load content dynamically."),
-    targetSelector: zod_1.z.string().optional().describe("An optional CSS selector for a specific element from which to extract text content. If not provided, the text content of the entire body will be returned."),
-    timeout: zod_1.z.number().optional().default(30000).describe("Optional timeout in milliseconds for page navigation and waiting for selectors. Defaults to 30 seconds.")
+import { DynamicStructuredTool } from "@langchain/core/tools";
+import { z } from "zod";
+import puppeteer from "puppeteer";
+const basicToolInputSchema = z.object({
+    url: z.string().describe("The URL of the web page to scrape."),
+    waitForSelector: z.string().optional().describe("An optional CSS selector to wait for on the page before attempting to extract content. Useful for pages that load content dynamically."),
+    targetSelector: z.string().optional().describe("An optional CSS selector for a specific element from which to extract text content. If not provided, the text content of the entire body will be returned."),
+    timeout: z.number().optional().default(30000).describe("Optional timeout in milliseconds for page navigation and waiting for selectors. Defaults to 30 seconds.")
 });
 async function basicScrapePage(args) {
     let browser = null;
     try {
         console.log(`Launching Puppeteer for URL: ${args.url}`);
-        browser = await puppeteer_1.default.launch({
+        browser = await puppeteer.launch({
             headless: true,
             args: [
                 '--no-sandbox',
@@ -84,29 +78,29 @@ async function basicScrapePage(args) {
         }
     }
 }
-exports.basicPuppeteerScrapeTool = new tools_1.DynamicStructuredTool({
+export const basicPuppeteerScrapeTool = new DynamicStructuredTool({
     name: "basicPuppeteerScrapeTool",
     description: "Fetches a web page using Puppeteer (allowing JavaScript rendering) and extracts either the full page text content or the text content of a specific element after an optional wait condition. Useful for basic scraping of dynamically rendered content.",
     schema: basicToolInputSchema,
     func: basicScrapePage,
 });
 // Advanced Puppeteer Scrape Tool
-const advancedToolInputSchema = zod_1.z.object({
-    url: zod_1.z.string().describe("The initial URL to navigate to."),
-    actions: zod_1.z.array(zod_1.z.object({
-        actionType: zod_1.z.enum(['click', 'type', 'waitForSelector', 'waitForTimeout', 'selectOption', 'scrollToElement', 'focus']),
-        selector: zod_1.z.string().optional().describe("CSS selector for the element to interact with (required for click, type, selectOption, scrollToElement, focus, and optionally for waitForSelector)."),
-        textToType: zod_1.z.string().optional().describe("Text to type into an input field (required for 'type' action)."),
-        valueToSelect: zod_1.z.string().optional().describe("The value of the option to select in a <select> element (required for 'selectOption' action)."),
-        timeout: zod_1.z.number().optional().describe("Timeout in milliseconds for 'waitForSelector' or 'waitForTimeout'.")
+const advancedToolInputSchema = z.object({
+    url: z.string().describe("The initial URL to navigate to."),
+    actions: z.array(z.object({
+        actionType: z.enum(['click', 'type', 'waitForSelector', 'waitForTimeout', 'selectOption', 'scrollToElement', 'focus']),
+        selector: z.string().optional().describe("CSS selector for the element to interact with (required for click, type, selectOption, scrollToElement, focus, and optionally for waitForSelector)."),
+        textToType: z.string().optional().describe("Text to type into an input field (required for 'type' action)."),
+        valueToSelect: z.string().optional().describe("The value of the option to select in a <select> element (required for 'selectOption' action)."),
+        timeout: z.number().optional().describe("Timeout in milliseconds for 'waitForSelector' or 'waitForTimeout'.")
     })).optional().describe("An optional array of actions to perform on the page in sequence before extraction."),
-    extractions: zod_1.z.array(zod_1.z.object({
-        name: zod_1.z.string().describe("A name for this piece of extracted data."),
-        selector: zod_1.z.string().describe("CSS selector for the element(s) to extract data from."),
-        extractType: zod_1.z.enum(['text', 'html', 'attribute', 'count', 'list_text', 'list_html', 'list_attribute']).default('text').describe("Type of data to extract: 'text' (textContent), 'html' (innerHTML), 'attribute' (a specific attribute's value), 'count' (number of elements matching selector), 'list_text' (array of textContents), 'list_html' (array of innerHTMLs), 'list_attribute' (array of attribute values)."),
-        attributeName: zod_1.z.string().optional().describe("Name of the attribute to extract if extractType is 'attribute' or 'list_attribute' (e.g., 'href', 'src', 'data-id').")
+    extractions: z.array(z.object({
+        name: z.string().describe("A name for this piece of extracted data."),
+        selector: z.string().describe("CSS selector for the element(s) to extract data from."),
+        extractType: z.enum(['text', 'html', 'attribute', 'count', 'list_text', 'list_html', 'list_attribute']).default('text').describe("Type of data to extract: 'text' (textContent), 'html' (innerHTML), 'attribute' (a specific attribute's value), 'count' (number of elements matching selector), 'list_text' (array of textContents), 'list_html' (array of innerHTMLs), 'list_attribute' (array of attribute values)."),
+        attributeName: z.string().optional().describe("Name of the attribute to extract if extractType is 'attribute' or 'list_attribute' (e.g., 'href', 'src', 'data-id').")
     })).describe("An array defining what data to extract after all actions are performed."),
-    globalTimeout: zod_1.z.number().optional().default(60000).describe("Global timeout in milliseconds for the entire scraping operation. Defaults to 60 seconds.")
+    globalTimeout: z.number().optional().default(60000).describe("Global timeout in milliseconds for the entire scraping operation. Defaults to 60 seconds.")
 });
 async function advancedScrapePage(args) {
     let browser = null;
@@ -119,7 +113,7 @@ async function advancedScrapePage(args) {
     };
     try {
         console.log(`Launching Puppeteer for advanced scrape of URL: ${args.url}`);
-        browser = await puppeteer_1.default.launch({
+        browser = await puppeteer.launch({
             headless: true,
             args: [
                 '--no-sandbox',
@@ -267,7 +261,7 @@ async function advancedScrapePage(args) {
         }
     }
 }
-exports.advancedScrapeTool = new tools_1.DynamicStructuredTool({
+export const advancedScrapeTool = new DynamicStructuredTool({
     name: "advancedScrapeTool",
     description: "Performs advanced web scraping tasks using Puppeteer. This includes navigating to a URL, performing a series of actions (like clicks, typing, waiting for elements), and then extracting multiple pieces of data from the page based on specified selectors.",
     schema: advancedToolInputSchema,

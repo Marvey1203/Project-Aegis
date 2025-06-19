@@ -4,11 +4,11 @@ declare const agentOutputSchema: z.ZodUnion<[z.ZodObject<{
     type: z.ZodLiteral<"final_answer">;
     content: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    type: "final_answer";
     content: string;
+    type: "final_answer";
 }, {
-    type: "final_answer";
     content: string;
+    type: "final_answer";
 }>, z.ZodObject<{
     type: z.ZodLiteral<"tool_call">;
     tool_name: z.ZodString;
@@ -26,11 +26,11 @@ export declare const eiraOutputParser: StructuredOutputParser<z.ZodUnion<[z.ZodO
     type: z.ZodLiteral<"final_answer">;
     content: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    type: "final_answer";
     content: string;
+    type: "final_answer";
 }, {
-    type: "final_answer";
     content: string;
+    type: "final_answer";
 }>, z.ZodObject<{
     type: z.ZodLiteral<"tool_call">;
     tool_name: z.ZodString;

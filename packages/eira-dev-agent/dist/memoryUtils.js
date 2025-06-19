@@ -1,48 +1,11 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadMemory = loadMemory;
-exports.saveMemory = saveMemory;
-const messages_1 = require("@langchain/core/messages");
-const fs = __importStar(require("fs/promises"));
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
+import * as fs from "fs/promises";
 /**
  * Loads chat history from a JSON file and converts it to Langchain messages.
  * @param filePath The path to the memory file.
  * @returns A promise that resolves to an array of HumanMessage or AIMessage objects.
  */
-async function loadMemory(filePath) {
+export async function loadMemory(filePath) {
     try {
         const fileContent = await fs.readFile(filePath, "utf-8");
         const memoryData = JSON.parse(fileContent);
@@ -51,7 +14,7 @@ async function loadMemory(filePath) {
         }
         return memoryData.memory_log.map((entry) => {
             if (entry.type === "human") {
-                return new messages_1.HumanMessage({ content: entry.data.content });
+                return new HumanMessage({ content: entry.data.content });
             }
             else {
                 // For AI messages, include tool_calls if they exist
@@ -59,7 +22,7 @@ async function loadMemory(filePath) {
                 if (entry.data.tool_calls && entry.data.tool_calls.length > 0) {
                     aiMessageData.tool_calls = entry.data.tool_calls;
                 }
-                return new messages_1.AIMessage(aiMessageData);
+                return new AIMessage(aiMessageData);
             }
         });
     }
@@ -74,7 +37,7 @@ async function loadMemory(filePath) {
  * @param filePath The path to the memory file.
  * @param chatHistory An array of HumanMessage or AIMessage objects.
  */
-async function saveMemory(filePath, chatHistory) {
+export async function saveMemory(filePath, chatHistory) {
     const memoryLog = chatHistory.map((message) => {
         if (message._getType() === "human") {
             return {

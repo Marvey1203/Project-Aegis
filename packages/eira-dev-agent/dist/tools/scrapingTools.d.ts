@@ -12,9 +12,9 @@ export declare const basicPuppeteerScrapeTool: DynamicStructuredTool<z.ZodObject
     targetSelector?: string | undefined;
 }, {
     url: string;
+    timeout?: number | undefined;
     waitForSelector?: string | undefined;
     targetSelector?: string | undefined;
-    timeout?: number | undefined;
 }>, {
     url: string;
     timeout: number;
@@ -22,9 +22,9 @@ export declare const basicPuppeteerScrapeTool: DynamicStructuredTool<z.ZodObject
     targetSelector?: string | undefined;
 }, {
     url: string;
+    timeout?: number | undefined;
     waitForSelector?: string | undefined;
     targetSelector?: string | undefined;
-    timeout?: number | undefined;
 }, string>;
 export declare const advancedScrapeTool: DynamicStructuredTool<z.ZodObject<{
     url: z.ZodString;
@@ -55,12 +55,12 @@ export declare const advancedScrapeTool: DynamicStructuredTool<z.ZodObject<{
     }, "strip", z.ZodTypeAny, {
         name: string;
         selector: string;
-        extractType: "html" | "text" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
+        extractType: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
         attributeName?: string | undefined;
     }, {
         name: string;
         selector: string;
-        extractType?: "html" | "text" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
+        extractType?: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
         attributeName?: string | undefined;
     }>, "many">;
     globalTimeout: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
@@ -69,7 +69,7 @@ export declare const advancedScrapeTool: DynamicStructuredTool<z.ZodObject<{
     extractions: {
         name: string;
         selector: string;
-        extractType: "html" | "text" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
+        extractType: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
         attributeName?: string | undefined;
     }[];
     globalTimeout: number;
@@ -85,7 +85,7 @@ export declare const advancedScrapeTool: DynamicStructuredTool<z.ZodObject<{
     extractions: {
         name: string;
         selector: string;
-        extractType?: "html" | "text" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
+        extractType?: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
         attributeName?: string | undefined;
     }[];
     actions?: {
@@ -101,7 +101,7 @@ export declare const advancedScrapeTool: DynamicStructuredTool<z.ZodObject<{
     extractions: {
         name: string;
         selector: string;
-        extractType: "html" | "text" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
+        extractType: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute";
         attributeName?: string | undefined;
     }[];
     globalTimeout: number;
@@ -117,7 +117,7 @@ export declare const advancedScrapeTool: DynamicStructuredTool<z.ZodObject<{
     extractions: {
         name: string;
         selector: string;
-        extractType?: "html" | "text" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
+        extractType?: "text" | "html" | "attribute" | "count" | "list_text" | "list_html" | "list_attribute" | undefined;
         attributeName?: string | undefined;
     }[];
     actions?: {

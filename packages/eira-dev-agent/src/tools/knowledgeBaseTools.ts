@@ -3,7 +3,7 @@
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 // Import our new centralized functions
-import { readKnowledgeBase, writeKnowledgeBase } from "./knowledgeBaseUtils";
+import { readKnowledgeBase, writeKnowledgeBase } from "./knowledgeBaseUtils.js";
 
 const addKnowledgeBaseEntrySchema = z.object({
   category: z.string().describe("The category for the new knowledge entry (e.g., 'project_structure', 'api_keys')."),

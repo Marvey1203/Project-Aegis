@@ -1,35 +1,58 @@
-"use strict";
 // src/tools/index.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.allTools = void 0;
-const searchTools_1 = require("./searchTools");
-const dateTimeTools_1 = require("./dateTimeTools");
-const findAndReplaceInFileTool_1 = require("./findAndReplaceInFileTool");
-const knowledgeBaseTools_1 = require("./knowledgeBaseTools");
-const projectManagementTools_1 = require("./projectManagementTools");
-const scrapingTools_1 = require("./scrapingTools");
-const askHumanForHelpTool_1 = require("./askHumanForHelpTool");
-const createFileTool_1 = require("./createFileTool");
-const listFilesTool_1 = require("./listFilesTool");
-const readFilesTool_1 = require("./readFilesTool");
-const writeFileTool_1 = require("./writeFileTool");
-const summarizeAndArchiveChatHistoryTool_1 = require("./summarizeAndArchiveChatHistoryTool");
-const lintingTool_1 = require("./lintingTool");
-exports.allTools = [
-    searchTools_1.tavilySearchTool,
-    dateTimeTools_1.getCurrentTimestampTool,
-    findAndReplaceInFileTool_1.findAndReplaceInFileTool,
-    knowledgeBaseTools_1.addKnowledgeBaseEntryTool,
-    projectManagementTools_1.createProjectTool,
-    projectManagementTools_1.createSprintTool,
-    projectManagementTools_1.createTaskTool,
-    scrapingTools_1.basicPuppeteerScrapeTool,
-    scrapingTools_1.advancedScrapeTool,
-    askHumanForHelpTool_1.askHumanForHelpTool,
-    createFileTool_1.createFileTool,
-    listFilesTool_1.listFilesTool,
-    readFilesTool_1.readFilesTool,
-    writeFileTool_1.writeFileTool,
-    summarizeAndArchiveChatHistoryTool_1.summarizeAndArchiveChatHistoryTool,
-    lintingTool_1.lintingTool,
+import { tavilySearchTool } from "./searchTools.js";
+import { getCurrentTimestampTool } from "./dateTimeTools.js";
+import { findAndReplaceInFileTool } from "./findAndReplaceInFileTool.js";
+import { addKnowledgeBaseEntryTool } from "./knowledgeBaseTools.js";
+import { createProjectTool, createSprintTool, createTaskTool } from "./projectManagementTools.js";
+import { basicPuppeteerScrapeTool, advancedScrapeTool } from "./scrapingTools.js";
+import { askHumanForHelpTool } from "./askHumanForHelpTool.js";
+import { createFileTool } from "./createFileTool.js";
+import { listFilesTool } from "./listFilesTool.js";
+import { readFilesTool } from "./readFilesTool.js";
+import { writeFileTool } from "./writeFileTool.js";
+import { summarizeAndArchiveChatHistoryTool } from "./summarizeAndArchiveChatHistoryTool.js";
+import { lintingTool } from "./lintingTool.js";
+import { updateSprintStatusTool } from "./updateSprintStatusTool.js";
+import { updateTaskStatusTool } from "./updateTaskStatusTool.js";
+import { readKnowledgeBaseTool } from "./readKnowledgeBaseTool.js";
+import { runBuildTool } from "./runBuildTool.js";
+import { deleteFileTool } from "./deleteFileTool.js";
+import { queryKnowledgeBaseTool } from "./queryKnowledgeBaseTool.js";
+import { updateKnowledgeBaseEntryTool } from "./updateKnowledgeBaseEntryTool.js";
+import { deleteKnowledgeBaseEntryTool } from "./deleteKnowledgeBaseEntryTool.js";
+import { deleteSprintTool } from "./deleteSprintTool.js";
+import { moveSprintTool } from "./moveSprintTool.js";
+import { createDirectoryTool } from "./createDirectoryTool.js";
+import { deleteDirectoryTool } from "./deleteDirectoryTool.js";
+import { reviewMyKnowledgeBaseTool } from "./reviewMyKnowledgeBaseTool.js";
+export const allTools = [
+    tavilySearchTool,
+    getCurrentTimestampTool,
+    findAndReplaceInFileTool,
+    addKnowledgeBaseEntryTool,
+    createProjectTool,
+    createSprintTool,
+    createTaskTool,
+    basicPuppeteerScrapeTool,
+    advancedScrapeTool,
+    askHumanForHelpTool,
+    createFileTool,
+    listFilesTool,
+    readFilesTool,
+    writeFileTool,
+    summarizeAndArchiveChatHistoryTool,
+    lintingTool,
+    updateSprintStatusTool,
+    updateTaskStatusTool,
+    readKnowledgeBaseTool,
+    runBuildTool,
+    deleteFileTool,
+    queryKnowledgeBaseTool,
+    updateKnowledgeBaseEntryTool,
+    deleteKnowledgeBaseEntryTool,
+    deleteSprintTool,
+    moveSprintTool,
+    createDirectoryTool,
+    deleteDirectoryTool,
+    reviewMyKnowledgeBaseTool,
 ];

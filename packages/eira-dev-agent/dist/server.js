@@ -1,18 +1,13 @@
-"use strict";
 // src/server.ts
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const promises_1 = __importDefault(require("fs/promises"));
-const path_1 = __importDefault(require("path"));
-const path_resolver_1 = require("./tools/path-resolver"); // Import findProjectRoot
-const app = (0, express_1.default)();
+import express from 'express';
+import cors from 'cors';
+import fs from 'fs/promises';
+import path from 'path';
+import { resolveToolPath, findProjectRoot } from './tools/path-resolver.js'; // Import findProjectRoot
+const app = express();
 const PORT = 3001;
-app.use((0, cors_1.default)());
-app.use(express_1.default.json());
+app.use(cors());
+app.use(express.json());
 app.get('/api/ping', (req, res) => {
     res.status(200).json({ message: 'pong' });
 });
@@ -22,18 +17,18 @@ app.post('/api/listFiles', (async (req, res, next) => {
         return res.status(400).json({ success: false, error: 'directoryPath (string) is required' });
     }
     try {
-        const absoluteStartPath = (0, path_resolver_1.resolveToolPath)(directoryPath);
-        const projectRoot = (0, path_resolver_1.findProjectRoot)(); // Use the reliable function from path-resolver
+        const absoluteStartPath = resolveToolPath(directoryPath);
+        const projectRoot = findProjectRoot(); // Use the reliable function from path-resolver
         console.log(`[Server] Recursively listing from: ${absoluteStartPath}`);
         const fileList = [];
         async function recursiveList(currentPath) {
-            const entries = await promises_1.default.readdir(currentPath, { withFileTypes: true });
+            const entries = await fs.readdir(currentPath, { withFileTypes: true });
             for (const entry of entries) {
-                const fullPath = path_1.default.join(currentPath, entry.name);
+                const fullPath = path.join(currentPath, entry.name);
                 if (['node_modules', '.next', '.git', 'dist'].includes(entry.name))
                     continue;
                 // FIX: Correctly calculate the path relative to the true project root
-                const relativePath = path_1.default.relative(projectRoot, fullPath).replace(/\\/g, '/');
+                const relativePath = path.relative(projectRoot, fullPath).replace(/\\/g, '/');
                 fileList.push(relativePath);
                 if (entry.isDirectory()) {
                     // We add a separator to the file list for directories, but don't add it to the path for recursion
@@ -61,8 +56,8 @@ app.post('/api/readFiles', (async (req, res, next) => {
     }
     try {
         const contents = await Promise.all(filePaths.map(async (p) => {
-            const absolutePath = (0, path_resolver_1.resolveToolPath)(p);
-            const content = await promises_1.default.readFile(absolutePath, 'utf-8');
+            const absolutePath = resolveToolPath(p);
+            const content = await fs.readFile(absolutePath, 'utf-8');
             return { filePath: p, content };
         }));
         res.status(200).json({ success: true, files: contents });
@@ -77,8 +72,8 @@ app.post('/api/writeFile', (async (req, res, next) => {
         return res.status(400).json({ success: false, error: 'filePath (string) and content (string) are required' });
     }
     try {
-        const absolutePath = (0, path_resolver_1.resolveToolPath)(filePath);
-        await promises_1.default.writeFile(absolutePath, content, 'utf-8');
+        const absolutePath = resolveToolPath(filePath);
+        await fs.writeFile(absolutePath, content, 'utf-8');
         res.status(200).json({ success: true, message: `Successfully wrote to ${filePath}` });
     }
     catch (error) {
@@ -91,17 +86,17 @@ app.post('/api/findAndReplace', (async (req, res, next) => {
         return res.status(400).json({ success: false, error: 'filePath, find, and replace (all strings) are required' });
     }
     try {
-        const absolutePath = (0, path_resolver_1.resolveToolPath)(filePath);
-        const originalContent = await promises_1.default.readFile(absolutePath, 'utf-8');
+        const absolutePath = resolveToolPath(filePath);
+        const originalContent = await fs.readFile(absolutePath, 'utf-8');
         const newContent = originalContent.replaceAll(find, replace);
-        await promises_1.default.writeFile(absolutePath, newContent, 'utf-8');
+        await fs.writeFile(absolutePath, newContent, 'utf-8');
         res.status(200).json({ success: true, message: `Successfully performed find and replace in ${filePath}` });
     }
     catch (error) {
         next(error);
     }
 }));
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
     console.error('[Server] An unhandled error occurred:', err.message);
     res.status(500).json({ success: false, error: err.message || 'An internal server error occurred.' });
 });

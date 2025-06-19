@@ -1,12 +1,12 @@
 // src/agent/eira.ts
 
-import { BaseMessage } from "@langchain/core/messages";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
-import { Runnable } from "@langchain/core/runnables";
-import { allTools as tools } from "../tools";
-import { HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
-import { Annotation } from "@langchain/langgraph";
+import { BaseMessage } from '@langchain/core/messages';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
+import { Runnable } from '@langchain/core/runnables';
+import { allTools as tools } from '../tools/index.js';
+import { HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+import { Annotation } from '@langchain/langgraph';
 
 export const AgentStateSchema = Annotation.Root({
   messages: Annotation<BaseMessage[]>({
@@ -33,7 +33,7 @@ let agent: Runnable | null = null;
 export function getAgent(): Runnable {
   if (!agent) {
     const llm = new ChatGoogleGenerativeAI({
-      model: "gemini-2.5-pro",
+      model: 'gemini-2.5-pro',
       maxOutputTokens: 8192,
       temperature: 0,
       safetySettings: [
@@ -46,8 +46,8 @@ export function getAgent(): Runnable {
     });
 
     const prompt = ChatPromptTemplate.fromMessages([
-      ["system", eiraSystemMessage],
-      new MessagesPlaceholder("messages"),
+      ['system', eiraSystemMessage],
+      new MessagesPlaceholder('messages'),
     ]);
     
     agent = prompt.pipe(llm.bindTools(tools));

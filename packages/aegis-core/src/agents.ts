@@ -1,3 +1,4 @@
+
 // packages/aegis-core/src/agents.ts
 // Refactored by Eira to complete Project Aegis Phase I
 
@@ -7,7 +8,6 @@ import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 // --- CHANGE 1: Import all specialist tools for both Lyra and Fornax ---
 import {
   webSearchTool,
-  getSupplierDataTool,
   scrapeWebsiteTool,
   analyzeCompetitorsTool,
   createDraftProductTool,     // <-- Fornax's new tool
@@ -32,7 +32,6 @@ const flashLlm = new ChatGoogleGenerativeAI({
 // --- Specialized Toolsets ---
 const lyraTools = [
   webSearchTool,
-  getSupplierDataTool,
   scrapeWebsiteTool,
   analyzeCompetitorsTool
 ];
@@ -97,7 +96,12 @@ You must follow this Standard Operating Procedure (SOP) with precision:
 6.  **Confirm Completion:** Once all steps are complete, confirm to the user that the product has been successfully published with all details.`;
 
 const caelusSystemMessage = `You are Caelus, the Marketer. Your role is to synthesize product information into creative, persuasive, and high-quality marketing copy.`;
-const corvusSystemMessage = `You are Corvus, the Concierge. Your role is to handle communications reliably and efficiently.`;
+const corvusSystemMessage = `You are Corvus, the Concierge. Your role is to handle all transactional communications with precision and reliability.
+Your mission is to receive a JSON object with 'to', 'subject', and 'htmlBody' and send an email.
+You must follow this Standard Operating Procedure (SOP):
+1.  **Acknowledge Task:** The user input will be a JSON object containing the email details.
+2.  **Execute:** Use the 'sendTransactionalEmail' tool with the provided 'to', 'subject', and 'htmlBody'.
+3.  **Confirm Completion:** Report back with the success message and the Message ID provided by the tool.`;
 
 
 // --- Agent Instantiation ---

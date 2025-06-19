@@ -1,8 +1,5 @@
-"use strict";
 // packages/eira-dev-agent/src/config/eira.config.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EiraProjectConfig = void 0;
-exports.EiraProjectConfig = {
+export const EiraProjectConfig = {
     projectName: "Project Aegis",
     description: "Synthetic economic agent platform focused on ecommerce and dropshipping",
     paths: {

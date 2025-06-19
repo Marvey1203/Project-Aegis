@@ -1,21 +1,18 @@
-"use strict";
 // src/tools/knowledgeBaseTools.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.addKnowledgeBaseEntryTool = void 0;
-const tools_1 = require("@langchain/core/tools");
-const zod_1 = require("zod");
+import { DynamicStructuredTool } from "@langchain/core/tools";
+import { z } from "zod";
 // Import our new centralized functions
-const knowledgeBaseUtils_1 = require("./knowledgeBaseUtils");
-const addKnowledgeBaseEntrySchema = zod_1.z.object({
-    category: zod_1.z.string().describe("The category for the new knowledge entry (e.g., 'project_structure', 'api_keys')."),
-    title: zod_1.z.string().describe("A concise, human-readable title for the entry."),
-    content: zod_1.z.any().describe("The actual information to be stored."),
-    tags: zod_1.z.array(zod_1.z.string()).optional().describe("Optional keywords or tags."),
+import { readKnowledgeBase, writeKnowledgeBase } from "./knowledgeBaseUtils.js";
+const addKnowledgeBaseEntrySchema = z.object({
+    category: z.string().describe("The category for the new knowledge entry (e.g., 'project_structure', 'api_keys')."),
+    title: z.string().describe("A concise, human-readable title for the entry."),
+    content: z.any().describe("The actual information to be stored."),
+    tags: z.array(z.string()).optional().describe("Optional keywords or tags."),
 });
 async function addKnowledgeBaseEntryLogic(input) {
     try {
         // 1. Read the KB using the resilient function
-        const kbData = await (0, knowledgeBaseUtils_1.readKnowledgeBase)();
+        const kbData = await readKnowledgeBase();
         const newEntryId = `kb_${Date.now()}`;
         const newEntry = {
             id: newEntryId,
@@ -31,7 +28,7 @@ async function addKnowledgeBaseEntryLogic(input) {
         }
         kbData.knowledgeBase.push(newEntry);
         // 2. Write to the KB using the centralized function
-        await (0, knowledgeBaseUtils_1.writeKnowledgeBase)(kbData);
+        await writeKnowledgeBase(kbData);
         return JSON.stringify({ success: true, entryId: newEntryId, message: "Knowledge base entry added successfully." });
     }
     catch (error) {
@@ -39,7 +36,7 @@ async function addKnowledgeBaseEntryLogic(input) {
         return JSON.stringify({ success: false, entryId: null, message: `Internal tool error: ${error.message}` });
     }
 }
-exports.addKnowledgeBaseEntryTool = new tools_1.DynamicStructuredTool({
+export const addKnowledgeBaseEntryTool = new DynamicStructuredTool({
     name: "addKnowledgeBaseEntryTool",
     description: "Adds a new structured entry to the general knowledge base section.",
     schema: addKnowledgeBaseEntrySchema,

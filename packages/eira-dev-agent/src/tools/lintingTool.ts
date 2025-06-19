@@ -4,18 +4,19 @@ import { Tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { resolveToolPath } from "./path-resolver";
+import { resolveToolPath, findProjectRoot } from "./path-resolver.js";
 import path from 'path';
 
 const execPromise = promisify(exec);
 
 async function runEslint(filePath: string): Promise<string> {
   const absolutePath = resolveToolPath(filePath);
+  const agentWorkspace = path.join(findProjectRoot(), 'packages', 'eira-dev-agent');
   const command = `npx eslint "${absolutePath}" --format json`;
 
   try {
     const { stdout } = await execPromise(command, {
-      cwd: path.dirname(resolveToolPath('package.json')) // Run from project root
+      cwd: agentWorkspace // Run from the agent's package directory
     });
     return stdout || "[]"; // Return empty JSON array if no output
   } catch (error: any) {

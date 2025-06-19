@@ -1,11 +1,11 @@
 // src/agent/eiraAgent.ts
 
-import { AgentStateSchema, AgentState, getAgent } from "./eira";
+import { AgentStateSchema, AgentState, getAgent } from "./eira.js";
 import { StateGraph, START, END } from "@langchain/langgraph";
 import { BaseMessage, AIMessage, ToolMessage } from "@langchain/core/messages";
-import { allTools as tools } from "../tools";
+import { allTools as tools } from "../tools/index.js";
 import { HumanMessage } from "@langchain/core/messages";
-import { readFilesTool } from "../tools/readFilesTool";
+import { readFilesTool } from "../tools/readFilesTool.js";
 
 // FIX: This list now ONLY contains tools that perform direct, verifiable file I/O.
 const fileSystemWriteTools = [
