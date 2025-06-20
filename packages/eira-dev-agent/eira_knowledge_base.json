@@ -599,7 +599,31 @@
       "projectId": "eira_agent_evolution",
       "projectName": "Eira Agent Evolution",
       "projectDescription": "",
-      "sprints": [],
+      "sprints": [
+        {
+          "sprintId": "sprint_1750418083442",
+          "sprintGoal": "To validate the new reflection, validation, and self-correction capabilities of the agent's V2 architecture.",
+          "sprintStatus": "completed",
+          "tasks": [
+            {
+              "taskId": "task_1750418083442_t6aokud",
+              "taskDescription": "Test the plan validation node with a deliberately flawed plan.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750418083442_zbwdrvn",
+              "taskDescription": "Test the post-execution reflection node's ability to summarize tool outputs.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750418083442_5nwd9m3",
+              "taskDescription": "Verify the file-write verification mechanism by writing and then reading a file.",
+              "status": "completed"
+            }
+          ],
+          "currentTaskId": null
+        }
+      ],
       "currentSprintId": null,
       "keyFileLocations": [],
       "projectSummary": ""

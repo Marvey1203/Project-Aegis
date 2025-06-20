@@ -1,3 +1,4 @@
+// src/agent/eiraAgent.ts
 import { AgentStateSchema, getAgent } from "./eira.js";
 import { StateGraph, START, END } from "@langchain/langgraph";
 import { AIMessage, ToolMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
@@ -16,6 +17,7 @@ const fileSystemWriteTools = [
     "createFileTool",
     "findAndReplaceInFileTool",
 ];
+// No changes needed for loadMidTermMemory, agentNode, customToolsNode, etc.
 const loadMidTermMemory = () => {
     try {
         const raw = fs.readFileSync(MEMORY_PATH, 'utf-8');
@@ -44,15 +46,12 @@ const agentNode = async (state) => {
             const content = typeof msg.content === 'string' ? msg.content : '';
             return content.trim().length > 0;
         });
-        // Automatic fallback user prompt injection if last message is not from human
         const lastMessage = validMessages[validMessages.length - 1];
         let messages = [memoryContext, ...validMessages];
         if (!(lastMessage instanceof HumanMessage)) {
             messages.push(new HumanMessage("Could you please clarify your next steps or intentions?"));
         }
-        // Invoke agent
         const response = await agent.invoke({ messages });
-        // Normalize response content
         let normalizedContent = '';
         if (Array.isArray(response.content)) {
             normalizedContent = response.content.map((block) => block.text || '').join('\n').trim();
@@ -101,7 +100,6 @@ const customToolsNode = async (state) => {
         catch (e) {
             toolOutput = `Tool '${toolCall.name}' failed: ${e.message}`;
         }
-        // Verification Layer for file system write tools
         let verificationReport = '';
         if (fileSystemWriteTools.includes(toolCall.name)) {
             const filePath = toolCall.args.filePath;
@@ -134,10 +132,8 @@ const validatePlanNode = async (state) => {
         if (response instanceof AIMessage &&
             typeof response.content === 'string' &&
             response.content.toLowerCase().includes("should be rejected")) {
-            // The critic rejected the plan. Return a clear system message with the critique.
             return { messages: [new SystemMessage(`Plan rejected. Critique: ${response.content}`)] };
         }
-        // The critic approved the plan. Return its approval message.
         return { messages: [response] };
     }
     catch (error) {
@@ -155,8 +151,6 @@ const handleErrorNode = async (state) => {
 const postExecutionReflectionNode = async (state) => {
     try {
         const toolMessages = state.messages.filter((m) => m instanceof ToolMessage);
-        // *** FIX 1: If no tools were run, there's nothing to reflect on.
-        // Return an empty object to make this a "pass-through" node.
         if (toolMessages.length === 0) {
             return {};
         }
@@ -175,23 +169,26 @@ const postExecutionReflectionNode = async (state) => {
         return { messages: [errorMessage] };
     }
 };
+// *** CRITICAL CHANGE: Updated router to handle the "human-in-the-loop" signal. ***
 const shouldCallTools = (state) => {
     const lastMessage = state.messages[state.messages.length - 1];
-    // If the agent has produced an error, go to the error handling node.
     if (lastMessage.content && typeof lastMessage.content === 'string' && lastMessage.content.startsWith("An error occurred")) {
         return "error";
     }
-    // If the agent's last message contains tool calls, execute them.
     if (lastMessage instanceof AIMessage && lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
+        // Check if the agent is calling the special tool to ask for help.
+        const isAskingForHelp = lastMessage.tool_calls.some((call) => call.name === "askHumanForHelpTool");
+        // If it's asking for help, we END this execution run. The CLI will then take over.
+        if (isAskingForHelp) {
+            return END;
+        }
+        // Otherwise, these are normal tools to be executed.
         return "tools";
     }
-    // If the agent's last message is text (a plan or a final answer without tools),
-    // let's send it to the critic for validation.
+    // If the message is a text-only plan, it needs validation.
     if (lastMessage instanceof AIMessage) {
-        // This catches text-only plans that need validation.
         return "validate_plan";
     }
-    // Otherwise, the turn is over.
     return END;
 };
 // --- GRAPH DEFINITION ---
@@ -208,15 +205,10 @@ workflow.addConditionalEdges("agent", shouldCallTools, {
     error: "error",
     [END]: END,
 });
-// *** FIX 2: Correct the logic for the validation node.
-// After the critic has run, we ALWAYS go back to the agent.
-// The agent will then see the critic's feedback (either "approved" or "rejected")
-// and decide what to do next: either generate the tool call for the approved plan
-// or generate a new, corrected plan.
+// This edge is correct: after validation, always loop back to the agent
+// with the critic's feedback.
 workflow.addEdge("validate_plan", "agent");
-// *** FIX 3: DELETE THE BUGGY UNCONDITIONAL EDGE
-// This was the primary cause of the loop.
-// workflow.addEdge("validate_plan", "tools"); // <-- DELETED
+// The rest of the graph logic is correct.
 workflow.addEdge("tools", "reflect");
 workflow.addEdge("reflect", "agent");
 workflow.addEdge("error", "agent");
@@ -238,15 +230,11 @@ export class EiraAgent {
         if (!input.messages || input.messages.length === 0) {
             throw new Error("No messages provided to agent");
         }
-        // Filter out ALL SystemMessages to ensure only one system message exists
         const cleanedMessages = input.messages.filter(msg => !(msg instanceof SystemMessage));
-        // Check for recent human input, inject fallback if missing
-        // This safety net is still useful.
         const lastHumanIndex = [...cleanedMessages].reverse().findIndex(msg => msg instanceof HumanMessage);
         if (lastHumanIndex === -1) {
             cleanedMessages.push(new HumanMessage("What would you like to do next?"));
         }
-        // Load memory and inject system message
         const midTermMemory = loadMidTermMemory();
         const escapedMemory = JSON.stringify(midTermMemory).slice(0, 500).replace(/\{/g, '\\{').replace(/\}/g, '\\}');
         const memoryContent = escapedMemory && escapedMemory.trim().length > 0 ? escapedMemory : 'No memory available';

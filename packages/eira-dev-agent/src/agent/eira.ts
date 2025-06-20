@@ -34,7 +34,7 @@ export function getAgent(midTermMemory: string): Runnable {
       { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
       { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
     ],
-    verbose: true,
+    verbose: false,
   });
 
   // Don't include system message in the prompt template - let the workflow handle it

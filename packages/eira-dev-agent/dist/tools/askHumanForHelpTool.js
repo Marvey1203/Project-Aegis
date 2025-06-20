@@ -1,18 +1,17 @@
+// src/tools/askHumanForHelpTool.ts
 import { z } from 'zod';
 import { DynamicStructuredTool } from '@langchain/core/tools';
 const askHumanForHelpSchema = z.object({
-    question: z.string().describe("The specific question or prompt the agent wants to ask the human. This should be clear and provide enough context for the human to understand the request."),
+    question: z.string().describe("The specific, clear question you need to ask the human to resolve your current situation or get approval."),
     context: z.string().optional().describe("Optional additional context the agent can provide to the human, such as the current task, file being worked on, or a summary of why help is needed."),
 });
 export const askHumanForHelpTool = new DynamicStructuredTool({
     name: "askHumanForHelpTool",
-    description: "Asks a human user for help, clarification, instructions, or a decision. Use this when you are stuck, unsure how to proceed, encounter an ambiguous situation, or require input that needs human judgment. Formulate a clear and concise question for the human, providing necessary context if available.",
+    description: "Asks a human user for help, clarification, instructions, or a decision. Use this when you are stuck, unsure how to proceed, encounter an ambiguous situation, or require input that needs human judgment. This tool will PAUSE your execution and wait for a direct human response.",
     schema: askHumanForHelpSchema,
-    func: async (args) => {
-        let promptString = `Question: ${args.question}`;
-        if (args.context) {
-            promptString += `\nContext: ${args.context}`;
-        }
-        return promptString;
+    func: async () => {
+        // This function's output is not used. Its call is a signal for the graph to stop.
+        // The CLI will extract the 'question' and 'context' from the tool_call arguments.
+        return "Pausing for human input. The user will be prompted to respond.";
     },
 });
