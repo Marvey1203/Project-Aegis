@@ -1,6 +1,9 @@
+
 {
   "files": [],
   "references": [
-    { "path": "packages/eira-dev-agent" }
+    { "path": "packages/eira-dev-agent" },
+    { "path": "packages/aegis-core" },
+    { "path": "packages/aegis-dashboard" }
   ]
 }

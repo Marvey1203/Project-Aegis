@@ -1,41 +1,19 @@
 {
-  "name": "aegis-core",
+  "name": "@aegis/aegis-core",
   "version": "1.0.0",
-  "description": "The core agentic swarm for Project Aegis.",
-  "main": "index.js",
+  "private": true,
   "type": "module",
+  "main": "dist/main.js",
   "scripts": {
-    "start": "dotenv -e ../../.env -- tsx src/server.ts"
+    "build": "tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
-    "@langchain/core": "^0.3.57",
-    "@langchain/google-genai": "^0.2.10",
-    "@langchain/langgraph": "^0.3.1",
-    "@langchain/tavily": "^0.1.3",
-    "@shopify/shopify-api": "^11.13.0",
-    "axios": "^1.10.0",
-    "cheerio": "^1.1.0",
-    "cors": "^2.8.5",
+    "@langchain/core": "^0.3.58",
+    "@langchain/google-genai": "^0.2.12",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "langchain": "^0.3.27",
-    "node-fetch": "^3.3.2",
+    "langchain": "^0.3.28",
     "resend": "^4.6.0",
-    "uuid": "^10.0.0",
-    "ws": "^8.18.2",
-    "zod": "^3.25.56"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",
-    "@types/node": "^22.15.30",
-    "@types/uuid": "^10.0.0",
-    "@types/ws": "^8.18.1",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "retry": "^0.13.1",
+    "zod": "^3.25.64"
   }
 }

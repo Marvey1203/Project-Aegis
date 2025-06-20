@@ -65,6 +65,11 @@ async function createSprintLogic(args: z.infer<typeof CreateSprintToolArgsSchema
     if (!project) {
       return JSON.stringify({ success: false, sprintId: null, message: `Error: Project with ID '${args.projectId}' not found.` });
     }
+
+    if (project.sprints.some(s => s.sprintGoal === args.sprintGoal)) {
+        return JSON.stringify({ success: false, sprintId: null, message: `Error: A sprint with the goal '${args.sprintGoal}' already exists in this project.` });
+    }
+
     const newSprintId = `sprint_${Date.now()}`;
     const newTasks: Task[] = (args.tasks || []).map(taskDescription => ({
       taskId: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
@@ -111,11 +116,22 @@ async function createTaskLogic(args: z.infer<typeof CreateTaskToolArgsSchema>): 
       return JSON.stringify({ success: false, taskIds: [], message: `Error: Sprint with ID '${args.sprintId}' not found.` });
     }
     
-    const newTasks: Task[] = args.taskDescriptions.map(desc => ({
-      taskId: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-      taskDescription: desc,
-      status: 'pending',
-    }));
+    const newTasks: Task[] = [];
+    for (const desc of args.taskDescriptions) {
+        if (sprint.tasks.some(t => t.taskDescription === desc)) {
+            console.warn(`Task with description '${desc}' already exists in this sprint. Skipping.`);
+            continue;
+        }
+        newTasks.push({
+            taskId: `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+            taskDescription: desc,
+            status: 'pending',
+        });
+    }
+
+    if (newTasks.length === 0) {
+        return JSON.stringify({ success: true, taskIds: [], message: "No new tasks were created as they already exist." });
+    }
 
     sprint.tasks.push(...newTasks);
     await writeKnowledgeBase(kb);

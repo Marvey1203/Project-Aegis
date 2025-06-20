@@ -1,28 +1,25 @@
 
-// packages/aegis-core/src/test-corvus.ts
+// src/test-corvus.ts
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import { corvusExecutor } from './agents.js';
+// Explicitly load environment variables from the root .env file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-async function testCorvus() {
-  console.log('--- Testing Corvus Agent ---');
 
-  const emailDetails = {
-    to: 'test@example.com', // Replace with a real test email address
-    subject: 'Aegis Test Email',
-    htmlBody: '<h1>Welcome to Project Aegis</h1><p>This is a test email from the Corvus agent.</p>',
+import { corvusExecutor } from './agents/corvus.js';
+
+async function main() {
+  const input = {
+    input: "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
   };
 
-  try {
-    const result = await corvusExecutor.invoke({
-      input: JSON.stringify(emailDetails),
-      chat_history: [],
-    });
-    console.log('--- Corvus Test Result ---');
-    console.dir(result, { depth: null });
-  } catch (error) {
-    console.error('--- Corvus Test Failed ---');
-    console.error(error);
-  }
+  const result = await corvusExecutor.invoke(input);
+
+  console.log(result);
 }
 
-testCorvus();
+main();

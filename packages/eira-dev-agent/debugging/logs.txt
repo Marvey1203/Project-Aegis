@@ -1,0 +1,1425 @@
+
+Marius@LAPTOP-569F4650 MINGW64 ~/Desktop/Coding/project-aegis (main)
+$ npx tsx --env-file .env packages/aegis-core/src/test-corvus.ts
+[chain/start] [1:chain:AgentExecutor] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'"
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": []
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign] Entering Chain run with input: {
+  "input": ""
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap] Entering Chain run with input: {
+  "input": ""
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap > 5:chain:RunnableLambda] Entering Chain run with input: {
+  "input": ""
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap > 5:chain:RunnableLambda] [8ms] Exiting Chain run with output: {
+  "output": []
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap] [13ms] Exiting Chain run with output: {
+  "agent_scratchpad": []
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign] [17ms] Exiting Chain run with output: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": [],
+  "agent_scratchpad": []
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 6:prompt:ChatPromptTemplate] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": [],
+  "agent_scratchpad": []
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 6:prompt:ChatPromptTemplate] [4ms] Exiting Chain run with output: {
+  "lc": 1,
+  "type": "constructor",
+  "id": [
+    "langchain_core",
+    "prompt_values",
+    "ChatPromptValue"
+  ],
+  "kwargs": {
+    "messages": [
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "SystemMessage"
+        ],
+        "kwargs": {
+          "content": "You are Corvus, the Concierge agent for Project Aegis. \nYour primary function is to handle all customer-facing communication with professionalism and efficiency.\nYou are responsible for sending transactional emails, such as order confirmations and shipping notifications.\nYou must be polite, clear, and concise in all your communications.",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "HumanMessage"
+        ],
+        "kwargs": {
+          "content": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      }
+    ]
+  }
+}
+[llm/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 7:llm:ChatGoogleGenerativeAI] Entering LLM run with input: {
+  "messages": [
+    [
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "SystemMessage"
+        ],
+        "kwargs": {
+          "content": "You are Corvus, the Concierge agent for Project Aegis. \nYour primary function is to handle all customer-facing communication with professionalism and efficiency.\nYou are responsible for sending transactional emails, such as order confirmations and shipping notifications.\nYou must be polite, clear, and concise in all your communications.",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "HumanMessage"
+        ],
+        "kwargs": {
+          "content": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      }
+    ]
+  ]
+}
+[llm/error] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 7:llm:ChatGoogleGenerativeAI] [905ms] LLM run errored with error: "[GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?alt=sse: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\n\nError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?alt=sse: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\n    at handleResponseNotOk (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:432:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async makeRequest (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:401:9)\n    at async generateContentStream (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:860:22)\n    at async file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@langchain+google-genai@0.2_c50b16d3328a85eacf369d32c4c3f22c/node_modules/@langchain/google-genai/dist/chat_models.js:690:32\n    at async RetryOperation._fn (C:\\Users\\Marius\\Desktop\\Coding\\project-aegis\\node_modules\\.pnpm\\p-retry@4.6.2\\node_modules\\p-retry\\index.js:50:12)"
+[chain/error] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent] [945ms] Chain run errored with error: "[GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?alt=sse: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\n\nError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?alt=sse: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\n    at handleResponseNotOk (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:432:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async makeRequest (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:401:9)\n    at async generateContentStream (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:860:22)\n    at async file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@langchain+google-genai@0.2_c50b16d3328a85eacf369d32c4c3f22c/node_modules/@langchain/google-genai/dist/chat_models.js:690:32\n    at async RetryOperation._fn (C:\\Users\\Marius\\Desktop\\Coding\\project-aegis\\node_modules\\.pnpm\\p-retry@4.6.2\\node_modules\\p-retry\\index.js:50:12)"
+[chain/error] [1:chain:AgentExecutor] [955ms] Chain run errored with error: "[GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?alt=sse: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\n\nError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?alt=sse: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\n    at handleResponseNotOk (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:432:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async makeRequest (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:401:9)\n    at async generateContentStream (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:860:22)\n    at async file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@langchain+google-genai@0.2_c50b16d3328a85eacf369d32c4c3f22c/node_modules/@langchain/google-genai/dist/chat_models.js:690:32\n    at async RetryOperation._fn (C:\\Users\\Marius\\Desktop\\Coding\\project-aegis\\node_modules\\.pnpm\\p-retry@4.6.2\\node_modules\\p-retry\\index.js:50:12)"
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?alt=sse: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+    at handleResponseNotOk (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:432:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async makeRequest (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:401:9)
+    at async generateContentStream (file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@google+generative-ai@0.24.1/node_modules/@google/generative-ai/dist/index.mjs:860:22)
+    at async file:///C:/Users/Marius/Desktop/Coding/project-aegis/node_modules/.pnpm/@langchain+google-genai@0.2_c50b16d3328a85eacf369d32c4c3f22c/node_modules/@langchain/google-genai/dist/chat_models.js:690:32
+    at async RetryOperation._fn (C:\Users\Marius\Desktop\Coding\project-aegis\node_modules\.pnpm\p-retry@4.6.2\node_modules\p-retry\index.js:50:12) {
+  status: 404,
+  statusText: 'Not Found',
+  errorDetails: undefined,
+  attemptNumber: 1,
+  retriesLeft: 6
+}
+
+Node.js v23.10.0
+
+Marius@LAPTOP-569F4650 MINGW64 ~/Desktop/Coding/project-aegis (main)
+$ pnpm build
+
+> project-aegis-monorepo@1.0.0 build C:\Users\Marius\Desktop\Coding\project-aegis
+> pnpm --filter "./packages/*" build
+
+Scope: 3 of 4 workspace projects
+packages/aegis-core build$ tsc
+packages/aegis-dashboard build$ next build
+packages/eira-dev-agent build$ tsc
+packages/aegis-dashboard build:    ▲ Next.js 15.3.4
+packages/aegis-dashboard build:    Creating an optimized production build ...
+packages/eira-dev-agent build: Done
+packages/aegis-core build: Done
+packages/aegis-dashboard build:  ✓ Compiled successfully in 7.0s
+packages/aegis-dashboard build:    Linting and checking validity of types ...
+packages/aegis-dashboard build:    Collecting page data ...
+packages/aegis-dashboard build:    Generating static pages (0/5) ...
+packages/aegis-dashboard build:    Generating static pages (1/5)
+packages/aegis-dashboard build:    Generating static pages (2/5)
+packages/aegis-dashboard build:    Generating static pages (3/5)
+packages/aegis-dashboard build:  ✓ Generating static pages (5/5)
+packages/aegis-dashboard build:    Finalizing page optimization ...
+packages/aegis-dashboard build:    Collecting build traces ...
+packages/aegis-dashboard build: Route (app)                                 Size  First Load JS
+packages/aegis-dashboard build: ┌ ○ /                                    5.63 kB         107 kB
+packages/aegis-dashboard build: └ ○ /_not-found                            978 B         102 kB
+packages/aegis-dashboard build: + First Load JS shared by all             101 kB
+packages/aegis-dashboard build:   ├ chunks/180-aabf82e25d34cbe3.js       46.3 kB
+packages/aegis-dashboard build:   ├ chunks/b8f30182-57e8efeaf5f155f2.js  53.2 kB
+packages/aegis-dashboard build:   └ other shared chunks (total)          1.96 kB
+packages/aegis-dashboard build: ○  (Static)  prerendered as static content
+packages/aegis-dashboard build: Done
+
+Marius@LAPTOP-569F4650 MINGW64 ~/Desktop/Coding/project-aegis (main)
+$ npx tsx --env-file .env packages/aegis-core/src/test-corvus.ts
+[chain/start] [1:chain:AgentExecutor] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'"
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": []
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign] Entering Chain run with input: {
+  "input": ""
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap] Entering Chain run with input: {
+  "input": ""
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap > 5:chain:RunnableLambda] Entering Chain run with input: {
+  "input": ""
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap > 5:chain:RunnableLambda] [5ms] Exiting Chain run with output: {
+  "output": []
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign > 4:chain:RunnableMap] [9ms] Exiting Chain run with output: {
+  "agent_scratchpad": []
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 3:chain:RunnableAssign] [11ms] Exiting Chain run with output: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": [],
+  "agent_scratchpad": []
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 6:prompt:ChatPromptTemplate] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": [],
+  "agent_scratchpad": []
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 6:prompt:ChatPromptTemplate] [3ms] Exiting Chain run with output: {
+  "lc": 1,
+  "type": "constructor",
+  "id": [
+    "langchain_core",
+    "prompt_values",
+    "ChatPromptValue"
+  ],
+  "kwargs": {
+    "messages": [
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "SystemMessage"
+        ],
+        "kwargs": {
+          "content": "You are Corvus, the Concierge agent for Project Aegis. \nYour primary function is to handle all customer-facing communication with professionalism and efficiency.\nYou are responsible for sending transactional emails, such as order confirmations and shipping notifications.\nYou must be polite, clear, and concise in all your communications.",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "HumanMessage"
+        ],
+        "kwargs": {
+          "content": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      }
+    ]
+  }
+}
+[llm/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 7:llm:ChatGoogleGenerativeAI] Entering LLM run with input: {
+  "messages": [
+    [
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "SystemMessage"
+        ],
+        "kwargs": {
+          "content": "You are Corvus, the Concierge agent for Project Aegis. \nYour primary function is to handle all customer-facing communication with professionalism and efficiency.\nYou are responsible for sending transactional emails, such as order confirmations and shipping notifications.\nYou must be polite, clear, and concise in all your communications.",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "HumanMessage"
+        ],
+        "kwargs": {
+          "content": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      }
+    ]
+  ]
+}
+[llm/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 7:llm:ChatGoogleGenerativeAI] [5.33s] Exiting LLM run with output: {
+  "generations": [
+    [
+      {
+        "text": "",
+        "generationInfo": {
+          "finishReason": "STOP",
+          "index": 0
+        },
+        "message": {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessageChunk"
+          ],
+          "kwargs": {
+            "content": [
+              {
+                "functionCall": {
+                  "name": "sendEmailTool",
+                  "args": {
+                    "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                  }
+                }
+              }
+            ],
+            "name": "model",
+            "tool_call_chunks": [
+              {
+                "name": "sendEmailTool",
+                "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+                "index": 0,
+                "type": "tool_call_chunk",
+                "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+              }
+            ],
+            "additional_kwargs": {},
+            "usage_metadata": {
+              "input_tokens": 145,
+              "output_tokens": 66,
+              "total_tokens": 513
+            },
+            "tool_calls": [
+              {
+                "name": "sendEmailTool",
+                "args": {
+                  "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                },
+                "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "response_metadata": {
+              "finishReason": "STOP",
+              "index": 0
+            },
+            "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+          }
+        }
+      }
+    ]
+  ],
+  "llmOutput": {
+    "tokenUsage": {
+      "promptTokens": 145,
+      "completionTokens": 66,
+      "totalTokens": 513
+    }
+  }
+}
+[chain/start] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 8:parser:ToolCallingAgentOutputParser] Entering Chain run with input: {
+  "lc": 1,
+  "type": "constructor",
+  "id": [
+    "langchain_core",
+    "messages",
+    "AIMessageChunk"
+  ],
+  "kwargs": {
+    "content": [
+      {
+        "functionCall": {
+          "name": "sendEmailTool",
+          "args": {
+            "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+          }
+        }
+      }
+    ],
+    "name": "model",
+    "tool_call_chunks": [
+      {
+        "name": "sendEmailTool",
+        "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+        "index": 0,
+        "type": "tool_call_chunk",
+        "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+      }
+    ],
+    "additional_kwargs": {},
+    "usage_metadata": {
+      "input_tokens": 145,
+      "output_tokens": 66,
+      "total_tokens": 513
+    },
+    "tool_calls": [
+      {
+        "name": "sendEmailTool",
+        "args": {
+          "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+        },
+        "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "type": "tool_call"
+      }
+    ],
+    "invalid_tool_calls": [],
+    "response_metadata": {
+      "finishReason": "STOP",
+      "index": 0
+    },
+    "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+  }
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent > 8:parser:ToolCallingAgentOutputParser] [1ms] Exiting Chain run with output: {
+  "output": [
+    {
+      "tool": "sendEmailTool",
+      "toolInput": {
+        "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+      },
+      "toolCallId": "07663edf-3113-44f1-9554-0d4135f151c3",
+      "log": "Invoking \"sendEmailTool\" with {\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}\n[{\"functionCall\":{\"name\":\"sendEmailTool\",\"args\":{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}}}]",
+      "messageLog": [
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessageChunk"
+          ],
+          "kwargs": {
+            "content": [
+              {
+                "functionCall": {
+                  "name": "sendEmailTool",
+                  "args": {
+                    "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                  }
+                }
+              }
+            ],
+            "name": "model",
+            "tool_call_chunks": [
+              {
+                "name": "sendEmailTool",
+                "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+                "index": 0,
+                "type": "tool_call_chunk",
+                "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+              }
+            ],
+            "additional_kwargs": {},
+            "usage_metadata": {
+              "input_tokens": 145,
+              "output_tokens": 66,
+              "total_tokens": 513
+            },
+            "tool_calls": [
+              {
+                "name": "sendEmailTool",
+                "args": {
+                  "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                },
+                "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "response_metadata": {
+              "finishReason": "STOP",
+              "index": 0
+            },
+            "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+          }
+        }
+      ]
+    }
+  ]
+}
+[chain/end] [1:chain:AgentExecutor > 2:chain:ToolCallingAgent] [5.36s] Exiting Chain run with output: {
+  "output": [
+    {
+      "tool": "sendEmailTool",
+      "toolInput": {
+        "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+      },
+      "toolCallId": "07663edf-3113-44f1-9554-0d4135f151c3",
+      "log": "Invoking \"sendEmailTool\" with {\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}\n[{\"functionCall\":{\"name\":\"sendEmailTool\",\"args\":{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}}}]",
+      "messageLog": [
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessageChunk"
+          ],
+          "kwargs": {
+            "content": [
+              {
+                "functionCall": {
+                  "name": "sendEmailTool",
+                  "args": {
+                    "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                  }
+                }
+              }
+            ],
+            "name": "model",
+            "tool_call_chunks": [
+              {
+                "name": "sendEmailTool",
+                "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+                "index": 0,
+                "type": "tool_call_chunk",
+                "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+              }
+            ],
+            "additional_kwargs": {},
+            "usage_metadata": {
+              "input_tokens": 145,
+              "output_tokens": 66,
+              "total_tokens": 513
+            },
+            "tool_calls": [
+              {
+                "name": "sendEmailTool",
+                "args": {
+                  "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                },
+                "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "response_metadata": {
+              "finishReason": "STOP",
+              "index": 0
+            },
+            "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+          }
+        }
+      ]
+    }
+  ]
+}
+[agent/action] [1:chain:AgentExecutor] Agent selected action: {
+  "tool": "sendEmailTool",
+  "toolInput": {
+    "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+  },
+  "toolCallId": "07663edf-3113-44f1-9554-0d4135f151c3",
+  "log": "Invoking \"sendEmailTool\" with {\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}\n[{\"functionCall\":{\"name\":\"sendEmailTool\",\"args\":{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}}}]",
+  "messageLog": [
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "AIMessageChunk"
+      ],
+      "kwargs": {
+        "content": [
+          {
+            "functionCall": {
+              "name": "sendEmailTool",
+              "args": {
+                "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+              }
+            }
+          }
+        ],
+        "name": "model",
+        "tool_call_chunks": [
+          {
+            "name": "sendEmailTool",
+            "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+            "index": 0,
+            "type": "tool_call_chunk",
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+          }
+        ],
+        "additional_kwargs": {},
+        "usage_metadata": {
+          "input_tokens": 145,
+          "output_tokens": 66,
+          "total_tokens": 513
+        },
+        "tool_calls": [
+          {
+            "name": "sendEmailTool",
+            "args": {
+              "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+            },
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "response_metadata": {
+          "finishReason": "STOP",
+          "index": 0
+        },
+        "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+      }
+    }
+  ]
+}
+[tool/start] [1:chain:AgentExecutor > 9:tool:SendEmailTool] Entering Tool run with input: "{"input":"{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"}"
+[tool/end] [1:chain:AgentExecutor > 9:tool:SendEmailTool] [1.06s] Exiting Tool run with output: "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information."
+[chain/start] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": [
+    {
+      "action": {
+        "tool": "sendEmailTool",
+        "toolInput": {
+          "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+        },
+        "toolCallId": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "log": "Invoking \"sendEmailTool\" with {\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}\n[{\"functionCall\":{\"name\":\"sendEmailTool\",\"args\":{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}}}]",
+        "messageLog": [
+          {
+            "lc": 1,
+            "type": "constructor",
+            "id": [
+              "langchain_core",
+              "messages",
+              "AIMessageChunk"
+            ],
+            "kwargs": {
+              "content": [
+                {
+                  "functionCall": {
+                    "name": "sendEmailTool",
+                    "args": {
+                      "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                    }
+                  }
+                }
+              ],
+              "name": "model",
+              "tool_call_chunks": [
+                {
+                  "name": "sendEmailTool",
+                  "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+                  "index": 0,
+                  "type": "tool_call_chunk",
+                  "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+                }
+              ],
+              "additional_kwargs": {},
+              "usage_metadata": {
+                "input_tokens": 145,
+                "output_tokens": 66,
+                "total_tokens": 513
+              },
+              "tool_calls": [
+                {
+                  "name": "sendEmailTool",
+                  "args": {
+                    "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                  },
+                  "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+                  "type": "tool_call"
+                }
+              ],
+              "invalid_tool_calls": [],
+              "response_metadata": {
+                "finishReason": "STOP",
+                "index": 0
+              },
+              "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+            }
+          }
+        ]
+      },
+      "observation": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information."
+    }
+  ]
+}
+[chain/start] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 11:chain:RunnableAssign] Entering Chain run with input: {
+  "input": ""
+}
+[chain/start] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 11:chain:RunnableAssign > 12:chain:RunnableMap] Entering Chain run with input: {
+  "input": ""
+}
+[chain/start] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 11:chain:RunnableAssign > 12:chain:RunnableMap > 13:chain:RunnableLambda] Entering Chain run with input: {
+  "input": ""
+}
+[chain/end] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 11:chain:RunnableAssign > 12:chain:RunnableMap > 13:chain:RunnableLambda] [2ms] Exiting Chain run with output: {
+  "output": [
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "AIMessageChunk"
+      ],
+      "kwargs": {
+        "content": [
+          {
+            "functionCall": {
+              "name": "sendEmailTool",
+              "args": {
+                "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+              }
+            }
+          }
+        ],
+        "name": "model",
+        "tool_call_chunks": [
+          {
+            "name": "sendEmailTool",
+            "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+            "index": 0,
+            "type": "tool_call_chunk",
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+          }
+        ],
+        "additional_kwargs": {},
+        "usage_metadata": {
+          "input_tokens": 145,
+          "output_tokens": 66,
+          "total_tokens": 513
+        },
+        "tool_calls": [
+          {
+            "name": "sendEmailTool",
+            "args": {
+              "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+            },
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "response_metadata": {
+          "finishReason": "STOP",
+          "index": 0
+        },
+        "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+      }
+    },
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "ToolMessage"
+      ],
+      "kwargs": {
+        "tool_call_id": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "content": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information.",
+        "additional_kwargs": {
+          "name": "sendEmailTool"
+        },
+        "response_metadata": {}
+      }
+    }
+  ]
+}
+[chain/end] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 11:chain:RunnableAssign > 12:chain:RunnableMap] [4ms] Exiting Chain run with output: {
+  "agent_scratchpad": [
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "AIMessageChunk"
+      ],
+      "kwargs": {
+        "content": [
+          {
+            "functionCall": {
+              "name": "sendEmailTool",
+              "args": {
+                "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+              }
+            }
+          }
+        ],
+        "name": "model",
+        "tool_call_chunks": [
+          {
+            "name": "sendEmailTool",
+            "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+            "index": 0,
+            "type": "tool_call_chunk",
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+          }
+        ],
+        "additional_kwargs": {},
+        "usage_metadata": {
+          "input_tokens": 145,
+          "output_tokens": 66,
+          "total_tokens": 513
+        },
+        "tool_calls": [
+          {
+            "name": "sendEmailTool",
+            "args": {
+              "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+            },
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "response_metadata": {
+          "finishReason": "STOP",
+          "index": 0
+        },
+        "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+      }
+    },
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "ToolMessage"
+      ],
+      "kwargs": {
+        "tool_call_id": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "content": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information.",
+        "additional_kwargs": {
+          "name": "sendEmailTool"
+        },
+        "response_metadata": {}
+      }
+    }
+  ]
+}
+[chain/end] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 11:chain:RunnableAssign] [7ms] Exiting Chain run with output: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": [
+    {
+      "action": {
+        "tool": "sendEmailTool",
+        "toolInput": {
+          "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+        },
+        "toolCallId": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "log": "Invoking \"sendEmailTool\" with {\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}\n[{\"functionCall\":{\"name\":\"sendEmailTool\",\"args\":{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}}}]",
+        "messageLog": [
+          {
+            "lc": 1,
+            "type": "constructor",
+            "id": [
+              "langchain_core",
+              "messages",
+              "AIMessageChunk"
+            ],
+            "kwargs": {
+              "content": [
+                {
+                  "functionCall": {
+                    "name": "sendEmailTool",
+                    "args": {
+                      "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                    }
+                  }
+                }
+              ],
+              "name": "model",
+              "tool_call_chunks": [
+                {
+                  "name": "sendEmailTool",
+                  "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+                  "index": 0,
+                  "type": "tool_call_chunk",
+                  "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+                }
+              ],
+              "additional_kwargs": {},
+              "usage_metadata": {
+                "input_tokens": 145,
+                "output_tokens": 66,
+                "total_tokens": 513
+              },
+              "tool_calls": [
+                {
+                  "name": "sendEmailTool",
+                  "args": {
+                    "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                  },
+                  "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+                  "type": "tool_call"
+                }
+              ],
+              "invalid_tool_calls": [],
+              "response_metadata": {
+                "finishReason": "STOP",
+                "index": 0
+              },
+              "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+            }
+          }
+        ]
+      },
+      "observation": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information."
+    }
+  ],
+  "agent_scratchpad": [
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "AIMessageChunk"
+      ],
+      "kwargs": {
+        "content": [
+          {
+            "functionCall": {
+              "name": "sendEmailTool",
+              "args": {
+                "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+              }
+            }
+          }
+        ],
+        "name": "model",
+        "tool_call_chunks": [
+          {
+            "name": "sendEmailTool",
+            "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+            "index": 0,
+            "type": "tool_call_chunk",
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+          }
+        ],
+        "additional_kwargs": {},
+        "usage_metadata": {
+          "input_tokens": 145,
+          "output_tokens": 66,
+          "total_tokens": 513
+        },
+        "tool_calls": [
+          {
+            "name": "sendEmailTool",
+            "args": {
+              "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+            },
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "response_metadata": {
+          "finishReason": "STOP",
+          "index": 0
+        },
+        "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+      }
+    },
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "ToolMessage"
+      ],
+      "kwargs": {
+        "tool_call_id": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "content": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information.",
+        "additional_kwargs": {
+          "name": "sendEmailTool"
+        },
+        "response_metadata": {}
+      }
+    }
+  ]
+}
+[chain/start] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 14:prompt:ChatPromptTemplate] Entering Chain run with input: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "steps": [
+    {
+      "action": {
+        "tool": "sendEmailTool",
+        "toolInput": {
+          "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+        },
+        "toolCallId": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "log": "Invoking \"sendEmailTool\" with {\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}\n[{\"functionCall\":{\"name\":\"sendEmailTool\",\"args\":{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}}}]",
+        "messageLog": [
+          {
+            "lc": 1,
+            "type": "constructor",
+            "id": [
+              "langchain_core",
+              "messages",
+              "AIMessageChunk"
+            ],
+            "kwargs": {
+              "content": [
+                {
+                  "functionCall": {
+                    "name": "sendEmailTool",
+                    "args": {
+                      "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                    }
+                  }
+                }
+              ],
+              "name": "model",
+              "tool_call_chunks": [
+                {
+                  "name": "sendEmailTool",
+                  "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+                  "index": 0,
+                  "type": "tool_call_chunk",
+                  "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+                }
+              ],
+              "additional_kwargs": {},
+              "usage_metadata": {
+                "input_tokens": 145,
+                "output_tokens": 66,
+                "total_tokens": 513
+              },
+              "tool_calls": [
+                {
+                  "name": "sendEmailTool",
+                  "args": {
+                    "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                  },
+                  "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+                  "type": "tool_call"
+                }
+              ],
+              "invalid_tool_calls": [],
+              "response_metadata": {
+                "finishReason": "STOP",
+                "index": 0
+              },
+              "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+            }
+          }
+        ]
+      },
+      "observation": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information."
+    }
+  ],
+  "agent_scratchpad": [
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "AIMessageChunk"
+      ],
+      "kwargs": {
+        "content": [
+          {
+            "functionCall": {
+              "name": "sendEmailTool",
+              "args": {
+                "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+              }
+            }
+          }
+        ],
+        "name": "model",
+        "tool_call_chunks": [
+          {
+            "name": "sendEmailTool",
+            "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+            "index": 0,
+            "type": "tool_call_chunk",
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+          }
+        ],
+        "additional_kwargs": {},
+        "usage_metadata": {
+          "input_tokens": 145,
+          "output_tokens": 66,
+          "total_tokens": 513
+        },
+        "tool_calls": [
+          {
+            "name": "sendEmailTool",
+            "args": {
+              "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+            },
+            "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "response_metadata": {
+          "finishReason": "STOP",
+          "index": 0
+        },
+        "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+      }
+    },
+    {
+      "lc": 1,
+      "type": "constructor",
+      "id": [
+        "langchain_core",
+        "messages",
+        "ToolMessage"
+      ],
+      "kwargs": {
+        "tool_call_id": "07663edf-3113-44f1-9554-0d4135f151c3",
+        "content": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information.",
+        "additional_kwargs": {
+          "name": "sendEmailTool"
+        },
+        "response_metadata": {}
+      }
+    }
+  ]
+}
+[chain/end] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 14:prompt:ChatPromptTemplate] [1ms] Exiting Chain run with output: {
+  "lc": 1,
+  "type": "constructor",
+  "id": [
+    "langchain_core",
+    "prompt_values",
+    "ChatPromptValue"
+  ],
+  "kwargs": {
+    "messages": [
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "SystemMessage"
+        ],
+        "kwargs": {
+          "content": "You are Corvus, the Concierge agent for Project Aegis. \nYour primary function is to handle all customer-facing communication with professionalism and efficiency.\nYou are responsible for sending transactional emails, such as order confirmations and shipping notifications.\nYou must be polite, clear, and concise in all your communications.",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "HumanMessage"
+        ],
+        "kwargs": {
+          "content": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "AIMessageChunk"
+        ],
+        "kwargs": {
+          "content": [
+            {
+              "functionCall": {
+                "name": "sendEmailTool",
+                "args": {
+                  "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                }
+              }
+            }
+          ],
+          "name": "model",
+          "tool_call_chunks": [
+            {
+              "name": "sendEmailTool",
+              "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+              "index": 0,
+              "type": "tool_call_chunk",
+              "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+            }
+          ],
+          "additional_kwargs": {},
+          "usage_metadata": {
+            "input_tokens": 145,
+            "output_tokens": 66,
+            "total_tokens": 513
+          },
+          "tool_calls": [
+            {
+              "name": "sendEmailTool",
+              "args": {
+                "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+              },
+              "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+              "type": "tool_call"
+            }
+          ],
+          "invalid_tool_calls": [],
+          "response_metadata": {
+            "finishReason": "STOP",
+            "index": 0
+          },
+          "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "ToolMessage"
+        ],
+        "kwargs": {
+          "tool_call_id": "07663edf-3113-44f1-9554-0d4135f151c3",
+          "content": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information.",
+          "additional_kwargs": {
+            "name": "sendEmailTool"
+          },
+          "response_metadata": {}
+        }
+      }
+    ]
+  }
+}
+[llm/start] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 15:llm:ChatGoogleGenerativeAI] Entering LLM run with input: {
+  "messages": [
+    [
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "SystemMessage"
+        ],
+        "kwargs": {
+          "content": "You are Corvus, the Concierge agent for Project Aegis. \nYour primary function is to handle all customer-facing communication with professionalism and efficiency.\nYou are responsible for sending transactional emails, such as order confirmations and shipping notifications.\nYou must be polite, clear, and concise in all your communications.",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "HumanMessage"
+        ],
+        "kwargs": {
+          "content": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+          "additional_kwargs": {},
+          "response_metadata": {}
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "AIMessageChunk"
+        ],
+        "kwargs": {
+          "content": [
+            {
+              "functionCall": {
+                "name": "sendEmailTool",
+                "args": {
+                  "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+                }
+              }
+            }
+          ],
+          "name": "model",
+          "tool_call_chunks": [
+            {
+              "name": "sendEmailTool",
+              "args": "{\"input\":\"{\\n  \\\"from\\\": \\\"sender@example.com\\\",\\n  \\\"to\\\": \\\"test@example.com\\\",\\n  \\\"subject\\\": \\\"Test Email\\\",\\n  \\\"html\\\": \\\"<h1>This is a test</h1>\\\"\\n}\"}",
+              "index": 0,
+              "type": "tool_call_chunk",
+              "id": "07663edf-3113-44f1-9554-0d4135f151c3"
+            }
+          ],
+          "additional_kwargs": {},
+          "usage_metadata": {
+            "input_tokens": 145,
+            "output_tokens": 66,
+            "total_tokens": 513
+          },
+          "tool_calls": [
+            {
+              "name": "sendEmailTool",
+              "args": {
+                "input": "{\n  \"from\": \"sender@example.com\",\n  \"to\": \"test@example.com\",\n  \"subject\": \"Test Email\",\n  \"html\": \"<h1>This is a test</h1>\"\n}"
+              },
+              "id": "07663edf-3113-44f1-9554-0d4135f151c3",
+              "type": "tool_call"
+            }
+          ],
+          "invalid_tool_calls": [],
+          "response_metadata": {
+            "finishReason": "STOP",
+            "index": 0
+          },
+          "id": "run-b8dd63cd-406b-43ef-8757-a768a6407d08"
+        }
+      },
+      {
+        "lc": 1,
+        "type": "constructor",
+        "id": [
+          "langchain_core",
+          "messages",
+          "ToolMessage"
+        ],
+        "kwargs": {
+          "tool_call_id": "07663edf-3113-44f1-9554-0d4135f151c3",
+          "content": "Error sending email: Invalid `to` field. Please use our testing email address instead of domains like `example.com`. See our documentation for more information.",
+          "additional_kwargs": {
+            "name": "sendEmailTool"
+          },
+          "response_metadata": {}
+        }
+      }
+    ]
+  ]
+}
+[llm/end] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 15:llm:ChatGoogleGenerativeAI] [4.38s] Exiting LLM run with output: {
+  "generations": [
+    [
+      {
+        "text": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address.",
+        "generationInfo": {
+          "index": 0,
+          "finishReason": "STOP"
+        },
+        "message": {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessageChunk"
+          ],
+          "kwargs": {
+            "content": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address.",
+            "additional_kwargs": {},
+            "response_metadata": {
+              "index": 0,
+              "finishReason": "STOP"
+            },
+            "tool_call_chunks": [],
+            "id": "run-add060a7-541f-4834-8162-5ee883780574",
+            "usage_metadata": {
+              "input_tokens": 257,
+              "output_tokens": 28,
+              "total_tokens": 587
+            },
+            "tool_calls": [],
+            "invalid_tool_calls": []
+          }
+        }
+      }
+    ]
+  ],
+  "llmOutput": {
+    "tokenUsage": {
+      "promptTokens": 0,
+      "completionTokens": 10,
+      "totalTokens": 10
+    }
+  }
+}
+[chain/start] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 16:parser:ToolCallingAgentOutputParser] Entering Chain run with input: {
+  "lc": 1,
+  "type": "constructor",
+  "id": [
+    "langchain_core",
+    "messages",
+    "AIMessageChunk"
+  ],
+  "kwargs": {
+    "content": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address.",
+    "additional_kwargs": {},
+    "response_metadata": {
+      "index": 0,
+      "finishReason": "STOP"
+    },
+    "tool_call_chunks": [],
+    "id": "run-add060a7-541f-4834-8162-5ee883780574",
+    "usage_metadata": {
+      "input_tokens": 257,
+      "output_tokens": 28,
+      "total_tokens": 587
+    },
+    "tool_calls": [],
+    "invalid_tool_calls": []
+  }
+}
+[chain/end] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent > 16:parser:ToolCallingAgentOutputParser] [0ms] Exiting Chain run with output: {
+  "returnValues": {
+    "output": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address."
+  },
+  "log": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address."
+}
+[chain/end] [1:chain:AgentExecutor > 10:chain:ToolCallingAgent] [4.39s] Exiting Chain run with output: {
+  "returnValues": {
+    "output": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address."
+  },
+  "log": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address."
+}
+[chain/end] [1:chain:AgentExecutor] [10.86s] Exiting Chain run with output: {
+  "input": "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  "output": "I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address."
+}
+{
+  input: "Send a test email to test@example.com from sender@example.com with the subject 'Test Email' and the body '<h1>This is a test</h1>'",
+  output: 'I am sorry, but I am unable to send an email to the address test@example.com. Please provide a valid email address.'
+}
+
+Marius@LAPTOP-569F4650 MINGW64 ~/Desktop/Coding/project-aegis (main)
+$

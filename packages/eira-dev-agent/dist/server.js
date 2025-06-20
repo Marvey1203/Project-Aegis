@@ -7,7 +7,7 @@ import { resolveToolPath, findProjectRoot } from './tools/path-resolver.js'; // 
 const app = express();
 const PORT = 3001;
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.get('/api/ping', (req, res) => {
     res.status(200).json({ message: 'pong' });
 });
@@ -73,6 +73,8 @@ app.post('/api/writeFile', (async (req, res, next) => {
     }
     try {
         const absolutePath = resolveToolPath(filePath);
+        const directory = path.dirname(absolutePath);
+        await fs.mkdir(directory, { recursive: true });
         await fs.writeFile(absolutePath, content, 'utf-8');
         res.status(200).json({ success: true, message: `Successfully wrote to ${filePath}` });
     }

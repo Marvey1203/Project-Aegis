@@ -1,64 +1,70 @@
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import * as fs from "fs/promises";
-/**
- * Loads chat history from a JSON file and converts it to Langchain messages.
- * @param filePath The path to the memory file.
- * @returns A promise that resolves to an array of HumanMessage or AIMessage objects.
- */
-export async function loadMemory(filePath) {
+import path from "path";
+export async function ensureMemoryFile(filePath) {
     try {
-        const fileContent = await fs.readFile(filePath, "utf-8");
-        const memoryData = JSON.parse(fileContent);
-        if (!memoryData.memory_log) {
-            return [];
+        await fs.access(filePath);
+        const data = await fs.readFile(filePath, 'utf-8');
+        if (!data.trim()) {
+            console.warn(`[Memory] File is empty. Resetting memory.`);
+            await fs.writeFile(filePath, JSON.stringify(getEmptyMemory(), null, 2), 'utf-8');
         }
-        return memoryData.memory_log.map((entry) => {
-            if (entry.type === "human") {
-                return new HumanMessage({ content: entry.data.content });
+        else {
+            try {
+                JSON.parse(data);
             }
-            else {
-                // For AI messages, include tool_calls if they exist
-                const aiMessageData = { content: entry.data.content };
-                if (entry.data.tool_calls && entry.data.tool_calls.length > 0) {
-                    aiMessageData.tool_calls = entry.data.tool_calls;
-                }
-                return new AIMessage(aiMessageData);
+            catch {
+                console.warn(`[Memory] Memory file is corrupted. Resetting.`);
+                await backupCorruptedFile(filePath, data);
+                await fs.writeFile(filePath, JSON.stringify(getEmptyMemory(), null, 2), 'utf-8');
             }
-        });
+        }
     }
-    catch (error) {
-        // If the file doesn't exist or is invalid, return an empty history
-        // console.warn(\`Error loading memory from \${filePath}: \${error}. Returning empty history.\`);
-        return [];
+    catch {
+        await fs.writeFile(filePath, JSON.stringify(getEmptyMemory(), null, 2), 'utf-8');
     }
 }
-/**
- * Saves the current chat history to a JSON file.
- * @param filePath The path to the memory file.
- * @param chatHistory An array of HumanMessage or AIMessage objects.
- */
+function getEmptyMemory() {
+    return {
+        memory_log: [],
+        metadata: {
+            last_updated: new Date().toISOString(),
+        },
+    };
+}
+async function backupCorruptedFile(filePath, content) {
+    const dir = path.dirname(filePath);
+    const base = path.basename(filePath, '.json');
+    const backupName = `${base}_corrupt_${Date.now()}.bak.json`;
+    const backupPath = path.join(dir, backupName);
+    await fs.writeFile(backupPath, content, 'utf-8');
+    console.warn(`[Memory] Backed up corrupted file to: ${backupPath}`);
+}
+export async function loadMemory(filePath) {
+    await ensureMemoryFile(filePath);
+    const data = await fs.readFile(filePath, 'utf-8');
+    const parsed = JSON.parse(data);
+    return parsed.memory_log.map((msg) => {
+        if (msg.type === 'human')
+            return new HumanMessage(msg.data);
+        if (msg.type === 'ai')
+            return new AIMessage(msg.data);
+        return null;
+    }).filter(Boolean);
+}
 export async function saveMemory(filePath, chatHistory) {
-    const memoryLog = chatHistory.map((message) => {
-        if (message._getType() === "human") {
-            return {
-                type: "human",
-                data: { content: message.content },
-            };
+    const memoryLog = chatHistory
+        .filter((message) => {
+        const type = message._getType();
+        return type === "human" || type === "ai";
+    })
+        .map((message) => {
+        const type = message._getType();
+        const data = { content: message.content };
+        if (type === "ai" && message.tool_calls && message.tool_calls.length > 0) {
+            data.tool_calls = message.tool_calls;
         }
-        else { // 'ai'
-            const aiMessage = message;
-            const storedAIMessage = {
-                type: "ai",
-                data: {
-                    content: aiMessage.content,
-                },
-            };
-            // Check for tool_calls and add them if they exist and are not empty
-            if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
-                storedAIMessage.data.tool_calls = aiMessage.tool_calls;
-            }
-            return storedAIMessage;
-        }
+        return { type, data };
     });
     const memoryData = {
         memory_log: memoryLog,
@@ -70,6 +76,15 @@ export async function saveMemory(filePath, chatHistory) {
         await fs.writeFile(filePath, JSON.stringify(memoryData, null, 2), "utf-8");
     }
     catch (error) {
-        console.error(`Error saving memory to \${filePath}: \${error}\ `);
+        console.error(`Error saving memory to ${filePath}: ${error}`);
+    }
+}
+export function loadMidTermMemory() {
+    try {
+        const raw = require("../eira_mid_term_memory.json");
+        return raw.memory_log || {};
+    }
+    catch {
+        return {};
     }
 }

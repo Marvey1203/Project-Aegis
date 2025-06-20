@@ -52,12 +52,13 @@ The following is the planned organizational chart for the swarm.
 
 | Agent | Role | Core Responsibility | Status |
 | :--- | :--- | :--- | :--- |
-| **Janus** | The Orchestrator | To manage the overall business strategy and coordinate the worker agents. | **Partially Implemented** |
-| **Fornax** | The Operator | To manage product listings on the e-commerce platform. | **Scaffolding Complete** |
-| **Caelus** | The Marketer | To create marketing materials and manage advertising campaigns. | **Partially Implemented** |
-| **Corvus** | The Concierge | To process customer orders and handle basic customer communication. | **Scaffolding Complete** |
-| **Argent** | The Accountant | To track all revenue and costs to determine profitability. | **Planned** |
-| **Akasha** | The Librarian | To manage the long-term memory and knowledge of the swarm. | **Planned** |
+| **Janus** | The Orchestrator | To manage the overall business strategy and coordinate the worker agents. | **Scaffolding Complete** |
+| **Lyra** | The Product Scout | To identify high-potential products and reliable suppliers. | **Scaffolding Complete** |
+| **Fornax** | The Merchandiser | To manage the product listings on the e-commerce platform. | **Scaffolding Complete** |
+| **Caelus** | The Marketer | To create marketing materials and manage advertising campaigns. | **Scaffolding Complete** |
+| **Corvus** | The Concierge | To process customer orders and handle customer communication. | **Scaffolding Complete** |
+| **Argent** | The Accountant | To track all revenue and costs to determine profitability. | **Scaffolding Complete** |
+| **Akasha** | The Librarian | To manage the long-term memory and knowledge of the swarm. | **Scaffolding Complete** |
 
 ## Initial Strategic Decisions (First Store)
 

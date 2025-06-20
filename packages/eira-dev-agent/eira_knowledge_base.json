@@ -1,6 +1,6 @@
 {
   "activeContext": {
-    "projectId": "project_aegis:_monetization",
+    "projectId": "eira_agent_evolution",
     "sprintId": null,
     "taskId": null
   },
@@ -284,6 +284,171 @@
             }
           ],
           "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750338329802",
+          "sprintGoal": "Develop an Internal Documentation Library (v1)",
+          "sprintStatus": "completed",
+          "tasks": [
+            {
+              "taskId": "task_1750338329802_izpeb8w",
+              "taskDescription": "Create `documentation` Directory",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750338329802_jtsi4yp",
+              "taskDescription": "Develop `ingestDocumentationTool`",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750338329802_fonjndk",
+              "taskDescription": "Develop `queryLocalDocsTool`",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750338329802_emlgnds",
+              "taskDescription": "Integrate New Tools",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750338329802_moo3a1h",
+              "taskDescription": "Request Rebuild and Restart",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750338329802_5kak5sn",
+              "taskDescription": "Ingest All Provided Documentation",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750338329802_wuyhumg",
+              "taskDescription": "Test the Full Workflow",
+              "status": "completed"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750360935335",
+          "sprintGoal": "Implement a Hard-coded Communication Protocol",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750360935335_ordbecm",
+              "taskDescription": "Analyze my core logic in `packages/eira-dev-agent/src/agent/eiraAgent.ts`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750360935335_ny164wg",
+              "taskDescription": "Implement a Response Validator in `eiraAgent.ts` to prevent silent actions.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750360935335_cd34uuv",
+              "taskDescription": "Request a rebuild and restart to load the new protocol.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750360935335_lmf1baj",
+              "taskDescription": "Test the new protocol to confirm its effectiveness.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750368115239",
+          "sprintGoal": "Refactor the Eira Agent Graph for Resilience and Intelligence",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750368115239_tixd0wi",
+              "taskDescription": "Implement \"Retry with Backoff\" in `customToolsNode`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750368115239_kxj0gc4",
+              "taskDescription": "Create the `handle_error` Node in the StateGraph.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750368115239_0g4p8e9",
+              "taskDescription": "Implement the `validate_plan` Node in the StateGraph.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750368115239_j0fc235",
+              "taskDescription": "Update Graph Routing to incorporate the new nodes.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750368115239_a6uw08f",
+              "taskDescription": "Request Rebuild & Restart.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750368115239_7macbtk",
+              "taskDescription": "Test the new resilience and validation capabilities.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750370494017",
+          "sprintGoal": "Implement a \"Read-Before-Write\" Protocol for State Management",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750370494017_c3a7wiq",
+              "taskDescription": "Analyze `projectManagementTools.ts`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750370494017_oj0zj55",
+              "taskDescription": "Modify `createProjectTool` to prevent duplicates.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750370494018_d4cjz4s",
+              "taskDescription": "Modify `createSprintTool` to prevent duplicates.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750370494018_dtihjk2",
+              "taskDescription": "Modify `createTaskTool` to prevent duplicates.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750370494018_hmoadgg",
+              "taskDescription": "Request Rebuild & Restart.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750370494018_nqu3a4q",
+              "taskDescription": "Test the new protocol by attempting to create a duplicate project.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750372719252",
+          "sprintGoal": "Remove Obsolete Response Validator",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750372719252_p8giqui",
+              "taskDescription": "Remove the validator code from `eiraAgent.ts`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750372719252_pyb7srz",
+              "taskDescription": "Request a rebuild and restart.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
         }
       ],
       "currentSprintId": null,
@@ -291,29 +456,150 @@
       "projectSummary": ""
     },
     {
-      "projectId": "project_aegis:_monetization",
-      "projectName": "Project Aegis: Monetization",
-      "projectDescription": "",
+      "projectId": "project_aegis",
+      "projectName": "Project Aegis",
+      "projectDescription": "The parent project for building the Aegis economic swarm, including the aegis-core and aegis-dashboard packages.",
       "sprints": [
         {
-          "sprintId": "sprint_1750285444295",
-          "sprintGoal": "Implement the Corvus Agent's Core Capability",
-          "sprintStatus": "planned",
+          "sprintId": "sprint_1750345061272",
+          "sprintGoal": "Establish the Foundational Codebase for Project Aegis",
+          "sprintStatus": "completed",
           "tasks": [
             {
-              "taskId": "task_1750285533685",
-              "taskDescription": "Ensure the `sendEmailTool` is correctly assigned to the `corvusExecutor` in `agents.ts` and that the `corvusSystemMessage` provides clear instructions on how to use it.",
+              "taskId": "task_1750345061272_sb97b3a",
+              "taskDescription": "Create `aegis-core` Directory Structure.",
               "status": "completed"
             },
             {
-              "taskId": "task_1750285747991",
-              "taskDescription": "Create a test workflow in `run-agent.ts` to invoke Corvus and test the `sendEmailTool`.",
+              "taskId": "task_1750345061272_od7wkz6",
+              "taskDescription": "Create `aegis-core` Placeholder Files.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750345061272_2bq1gzl",
+              "taskDescription": "Re-initialize `aegis-dashboard`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750345061272_dxpqqtv",
+              "taskDescription": "Update Documentation.",
+              "status": "completed"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750353458909",
+          "sprintGoal": "Finalize the Foundational Architecture",
+          "sprintStatus": "completed",
+          "tasks": [
+            {
+              "taskId": "task_1750353458910_ofsghsv",
+              "taskDescription": "Update `README.md` to include Lyra and reflect the refined roles of all seven agents.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750353458910_yvfaajt",
+              "taskDescription": "Create the `lyra.ts` placeholder file in `packages/aegis-core/src/agents/`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750353458910_rzqxz6m",
+              "taskDescription": "Update the comments in the existing agent placeholder files to match their refined responsibilities.",
+              "status": "completed"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750353572389",
+          "sprintGoal": "Implement Lyra (The Product Scout) - Initial Product Research",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750353572389_kj9d7ir",
+              "taskDescription": "Develop `cjDropshippingTool` to search for products by keyword.",
               "status": "pending"
+            },
+            {
+              "taskId": "task_1750353572389_o9eedft",
+              "taskDescription": "Integrate `cjDropshippingTool` into my `index.ts` file.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750353572389_6b6mp1x",
+              "taskDescription": "Request Rebuild & Restart.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750353572389_hhih6a3",
+              "taskDescription": "Implement Initial Lyra Logic in `packages/aegis-core/src/agents/lyra.ts`.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750353572389_qp0yjmv",
+              "taskDescription": "Test Lyra's Research Capability.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750354014335",
+          "sprintGoal": "Finalize the Foundational Architecture",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750354014335_vb3dyc3",
+              "taskDescription": "Update `README.md` to include Lyra and reflect the refined roles of all seven agents.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750354014335_z1vvqu6",
+              "taskDescription": "Create the placeholder file for the Lyra agent in `packages/aegis-core/src/agents/`.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750354014335_s5e5aj8",
+              "taskDescription": "Update the comments in the existing agent placeholder files to match their refined responsibilities.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750358371298",
+          "sprintGoal": "Implement and Test the Corvus Agent's Core Email Capability",
+          "sprintStatus": "completed",
+          "tasks": [
+            {
+              "taskId": "task_1750358371298_2sjji7j",
+              "taskDescription": "Implement Initial Corvus Logic in `packages/aegis-core/src/agents/corvus.ts`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750358371298_9yvgfgu",
+              "taskDescription": "Create a Test Workflow in `packages/aegis-core/src/test-corvus.ts`.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750358371298_rzpap9m",
+              "taskDescription": "Request Rebuild & Test Execution.",
+              "status": "completed"
             }
           ],
           "currentTaskId": null
         }
       ],
+      "currentSprintId": null,
+      "keyFileLocations": [],
+      "projectSummary": ""
+    },
+    {
+      "projectId": "eira_agent_evolution",
+      "projectName": "Eira Agent Evolution",
+      "projectDescription": "",
+      "sprints": [],
       "currentSprintId": null,
       "keyFileLocations": [],
       "projectSummary": ""
@@ -373,6 +659,33 @@
       "tags": [],
       "createdAt": "2025-06-19T10:39:35.529Z",
       "lastUpdatedAt": "2025-06-19T12:35:58.920Z"
+    },
+    {
+      "id": "kb_1750339767140",
+      "category": "development_workflow",
+      "title": "Core Principle: Defensive Tool Composition and Type Guarding",
+      "content": "When one tool calls another internally, it is not enough to assume the happy-path output. I must anticipate and handle the potential error states of the called tool. For example, if a tool that is expected to return a string can also return a `ToolMessage` object on failure, I must implement a type guard to check the result before passing it to other functions that strictly expect a string. This prevents TypeScript compilation errors and makes the system more robust.",
+      "tags": [],
+      "createdAt": "2025-06-19T13:29:27.140Z",
+      "lastUpdatedAt": "2025-06-19T13:29:27.140Z"
+    },
+    {
+      "id": "kb_1750340794506",
+      "category": "development_workflow",
+      "title": "Core Principle: Verify Internal Tool Schemas Before Calling",
+      "content": "My own tools have different internal structures. Some, like `deleteDirectoryTool`, are class-based and expect a single JSON string via an `input` property. Others, like `writeFileTool`, are `DynamicStructuredTool`s and expect direct, named arguments. I must not assume the schema of a tool, even one I wrote myself. The 'Reality-First' protocol is paramount: before calling any tool, I must first read its source code to understand its exact, ground-truth schema and call it accordingly. This prevents schema-related errors and ensures reliable execution.",
+      "tags": [],
+      "createdAt": "2025-06-19T13:46:34.506Z",
+      "lastUpdatedAt": "2025-06-19T13:46:34.506Z"
+    },
+    {
+      "id": "kb_1750369644618",
+      "category": "development_workflow",
+      "title": "Core Principle: Defensive Type-Checking",
+      "content": "When writing code, especially for agentic systems, I must practice defensive type-checking. I will never assume the type of a variable, particularly those derived from external sources like LLM responses or error objects. I will always validate the type (e.g., using `typeof` or `Array.isArray`) before performing operations on it. This prevents runtime errors and makes the system more resilient.",
+      "tags": [],
+      "createdAt": "2025-06-19T21:47:24.618Z",
+      "lastUpdatedAt": "2025-06-19T21:47:24.618Z"
     }
   ],
   "userPreferences": {},

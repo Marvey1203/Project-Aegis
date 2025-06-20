@@ -27,6 +27,8 @@ import { moveSprintTool } from "./moveSprintTool.js";
 import { createDirectoryTool } from "./createDirectoryTool.js";
 import { deleteDirectoryTool } from "./deleteDirectoryTool.js";
 import { reviewMyKnowledgeBaseTool } from "./reviewMyKnowledgeBaseTool.js";
+import { ingestDocumentationTool } from "./ingestDocumentationTool.js";
+import { queryLocalDocsTool } from "./queryLocalDocsTool.js";
 
 export const allTools = [
   tavilySearchTool,
@@ -58,4 +60,6 @@ export const allTools = [
   createDirectoryTool,
   deleteDirectoryTool,
   reviewMyKnowledgeBaseTool,
+  ingestDocumentationTool,
+  queryLocalDocsTool,
 ];

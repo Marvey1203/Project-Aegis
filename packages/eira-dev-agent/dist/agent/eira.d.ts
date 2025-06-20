@@ -4,4 +4,8 @@ export declare const AgentStateSchema: import("@langchain/langgraph").Annotation
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
 }>;
 export type AgentState = typeof AgentStateSchema.State;
-export declare function getAgent(): Runnable;
+/**
+ * Create the Eira agent with embedded mid-term memory inside system message.
+ * @param midTermMemory The string content of mid-term memory to inject.
+ */
+export declare function getAgent(midTermMemory: string): Runnable;

@@ -1,15 +1,29 @@
-// src/cli.ts
-// #!/usr/bin/env node
 import 'dotenv/config';
 import { EiraAgent } from './agent/eiraAgent.js';
 import * as readline from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
 import { HumanMessage } from '@langchain/core/messages';
 import { loadMemory, saveMemory } from './memoryUtils.js';
+import * as fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const memoryFilePath = 'eira_mid_term_memory.json';
 async function main() {
     console.log("--- Eira Interactive CLI v1.4 (Robust Memory) ---");
     console.log("Initializing agent and loading memory...");
+    const memoryPath = path.resolve(__dirname, '..', memoryFilePath);
+    let midTermMemoryRaw = '{}';
+    try {
+        const memoryData = await fs.readFile(memoryPath, 'utf-8');
+        midTermMemoryRaw = memoryData;
+    }
+    catch (error) {
+        console.warn('Could not load mid-term memory file, using empty object');
+    }
+    const midTermMemory = midTermMemoryRaw.length > 1000 ? midTermMemoryRaw.slice(0, 1000) + '...' : midTermMemoryRaw;
     const eira = EiraAgent.create();
     const rl = readline.createInterface({ input, output });
     let chatHistory = await loadMemory(memoryFilePath);
@@ -26,16 +40,18 @@ async function main() {
         }
         console.log('Eira is thinking...');
         try {
-            // FIX: Agent now returns the full and final message history for the session.
             const finalMessages = await eira.run(userInput, chatHistory);
-            // The new chat history IS the final message list from the agent.
             chatHistory = finalMessages;
-            // Save the complete and valid history after each interaction.
             await saveMemory(memoryFilePath, chatHistory);
-            // Display the last message to the user.
             const lastMessage = chatHistory[chatHistory.length - 1];
+            if (lastMessage?.name === 'askHumanForHelpTool') {
+                console.log(`\nEira needs your help: ${lastMessage.content}`);
+                const userInput = await rl.question("Please type your response and press Enter: ");
+                chatHistory.push(new HumanMessage(userInput));
+                await saveMemory(memoryFilePath, chatHistory);
+                continue;
+            }
             const eiraResponseContent = lastMessage?.content ?? "[Eira produced no verbal response]";
-            // Don't display anything if the last message was a tool call with no text.
             if (typeof eiraResponseContent === "string" && eiraResponseContent.trim() !== "") {
                 console.log(`Eira: ${eiraResponseContent}\n`);
             }
