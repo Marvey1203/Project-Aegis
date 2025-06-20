@@ -1,4 +1,14 @@
-export declare const allTools: (import("langchain/tools").Tool<any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+export declare const allTools: (import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
+    planSummary: import("zod").ZodString;
+}, "strip", import("zod").ZodTypeAny, {
+    planSummary: string;
+}, {
+    planSummary: string;
+}>, {
+    planSummary: string;
+}, {
+    planSummary: string;
+}, string> | import("langchain/tools").Tool<any> | import("langchain/tools").DynamicStructuredTool<import("zod").ZodObject<{
     filePath: import("zod").ZodString;
     find: import("zod").ZodString;
     replace: import("zod").ZodString;

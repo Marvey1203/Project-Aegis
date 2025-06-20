@@ -29,6 +29,7 @@ import { deleteDirectoryTool } from "./deleteDirectoryTool.js";
 import { reviewMyKnowledgeBaseTool } from "./reviewMyKnowledgeBaseTool.js";
 import { ingestDocumentationTool } from "./ingestDocumentationTool.js";
 import { queryLocalDocsTool } from "./queryLocalDocsTool.js";
+import { humanConfirmationTool } from "./humanConfirmationTool.js";
 
 export const allTools = [
   tavilySearchTool,
@@ -62,4 +63,5 @@ export const allTools = [
   reviewMyKnowledgeBaseTool,
   ingestDocumentationTool,
   queryLocalDocsTool,
+  humanConfirmationTool
 ];

@@ -30,18 +30,14 @@ async function main() {
             // *** CRITICAL CHANGE: Check for the human-in-the-loop signal ***
             if (lastMessage instanceof AIMessage &&
                 lastMessage.tool_calls?.some(call => call.name === 'askHumanForHelpTool')) {
-                const askToolCall = lastMessage.tool_calls.find(call => call.name === 'askHumanForHelpTool');
-                const question = askToolCall?.args.question || "I need your input to continue.";
-                const context = askToolCall?.args.context;
-                // Display the agent's text response, which sets up the question
-                console.log(`\nEira: ${lastMessage.content}`);
-                // Display the specific question for the user
-                if (context) {
-                    console.log(`\nContext: ${context}`);
-                }
-                console.log(`Eira is waiting for your response to the following question:`);
-                // The loop will now prompt for the next user input with the question as context
-                nextUserInput = await rl.question(`> ${question}\nMarius: `);
+                // The agent's main content already includes the question.
+                // We just need to display it and then prompt for the next input.
+                const eiraResponseContent = typeof lastMessage.content === "string"
+                    ? lastMessage.content.trim()
+                    : JSON.stringify(lastMessage.content, null, 2);
+                console.log(`\nEira: ${eiraResponseContent}\n`);
+                // The loop will now prompt for the next turn.
+                nextUserInput = await rl.question('Marius: ');
             }
             else {
                 // This is a normal turn where the agent finished its thought.

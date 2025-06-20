@@ -40,7 +40,12 @@ const agentNode = async (state) => {
         const memoryContent = escapedMemory && escapedMemory.trim().length > 0
             ? escapedMemory
             : 'No memory available';
-        const memoryContext = new SystemMessage(`You are Eira, an AI software developer. Execute tasks by calling tools. Always explain your reasoning before taking action. Memory: ${memoryContent}`);
+        const memoryContext = new SystemMessage(`You are Eira, an AI software developer. Execute tasks by calling tools. Always explain your reasoning before taking action.
+        ---
+        IMPORTANT RULE: When your plan involves executing tools that modify files or the system state, you MUST first present the complete plan to the user. Then, to pause for approval, you MUST call the 'humanConfirmationTool'.
+        DO NOT call other tools in the same turn that you call 'humanConfirmationTool'.
+        ---
+        Memory: ${memoryContent}`);
         const filtered = state.messages.filter(msg => !(msg instanceof SystemMessage));
         const validMessages = filtered.filter(msg => {
             const content = typeof msg.content === 'string' ? msg.content : '';
@@ -169,17 +174,18 @@ const postExecutionReflectionNode = async (state) => {
         return { messages: [errorMessage] };
     }
 };
-// *** CRITICAL CHANGE: Updated router to handle the "human-in-the-loop" signal. ***
 const shouldCallTools = (state) => {
     const lastMessage = state.messages[state.messages.length - 1];
     if (lastMessage.content && typeof lastMessage.content === 'string' && lastMessage.content.startsWith("An error occurred")) {
         return "error";
     }
     if (lastMessage instanceof AIMessage && lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
-        // Check if the agent is calling the special tool to ask for help.
-        const isAskingForHelp = lastMessage.tool_calls.some((call) => call.name === "askHumanForHelpTool");
-        // If it's asking for help, we END this execution run. The CLI will then take over.
-        if (isAskingForHelp) {
+        const hasConfirmationCall = lastMessage.tool_calls.some((call) => call.name === "humanConfirmationTool");
+        const hasAskHumanCall = lastMessage.tool_calls.some((call) => call.name === "askHumanForHelpTool");
+        // *** NEW LOGIC ***
+        // If the agent is asking for confirmation OR help, end the turn.
+        // This returns control to the CLI, effectively pausing the agent.
+        if (hasConfirmationCall || hasAskHumanCall) {
             return END;
         }
         // Otherwise, these are normal tools to be executed.
