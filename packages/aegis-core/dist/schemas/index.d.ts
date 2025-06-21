@@ -66,8 +66,6 @@ export declare const CustomerSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     email: string;
     id: string;
-    firstName: string;
-    lastName: string;
     shippingAddress: {
         street: string;
         city: string;
@@ -75,6 +73,8 @@ export declare const CustomerSchema: z.ZodObject<{
         zipCode: string;
         country: string;
     };
+    firstName: string;
+    lastName: string;
     createdAt: string;
     phone?: string | undefined;
     billingAddress?: {
@@ -87,8 +87,6 @@ export declare const CustomerSchema: z.ZodObject<{
 }, {
     email: string;
     id: string;
-    firstName: string;
-    lastName: string;
     shippingAddress: {
         street: string;
         city: string;
@@ -96,6 +94,8 @@ export declare const CustomerSchema: z.ZodObject<{
         zipCode: string;
         country: string;
     };
+    firstName: string;
+    lastName: string;
     createdAt: string;
     phone?: string | undefined;
     billingAddress?: {
@@ -162,10 +162,10 @@ export declare const ProductSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     id: string;
     title: string;
+    vendor: string;
     description: string;
     createdAt: string;
     price: number;
-    vendor: string;
     tags?: string[] | undefined;
     images?: string[] | undefined;
     variants?: {
@@ -179,10 +179,10 @@ export declare const ProductSchema: z.ZodObject<{
 }, {
     id: string;
     title: string;
+    vendor: string;
     description: string;
     createdAt: string;
     price: number;
-    vendor: string;
     tags?: string[] | undefined;
     images?: string[] | undefined;
     variants?: {
@@ -200,15 +200,15 @@ export declare const LineItemSchema: z.ZodObject<{
     quantity: z.ZodNumber;
     price: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
+    quantity: number;
     price: number;
     productId: string;
     variantId: string;
-    quantity: number;
 }, {
+    quantity: number;
     price: number;
     productId: string;
     variantId: string;
-    quantity: number;
 }>;
 export declare const OrderSchema: z.ZodObject<{
     id: z.ZodString;
@@ -219,15 +219,15 @@ export declare const OrderSchema: z.ZodObject<{
         quantity: z.ZodNumber;
         price: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
+        quantity: number;
         price: number;
         productId: string;
         variantId: string;
-        quantity: number;
     }, {
+        quantity: number;
         price: number;
         productId: string;
         variantId: string;
-        quantity: number;
     }>, "many">;
     totalPrice: z.ZodNumber;
     status: z.ZodEnum<["pending", "paid", "fulfilled", "cancelled", "refunded"]>;
@@ -240,10 +240,10 @@ export declare const OrderSchema: z.ZodObject<{
     createdAt: string;
     customerId: string;
     lineItems: {
+        quantity: number;
         price: number;
         productId: string;
         variantId: string;
-        quantity: number;
     }[];
     totalPrice: number;
     shippingProvider?: string | undefined;
@@ -254,10 +254,10 @@ export declare const OrderSchema: z.ZodObject<{
     createdAt: string;
     customerId: string;
     lineItems: {
+        quantity: number;
         price: number;
         productId: string;
         variantId: string;
-        quantity: number;
     }[];
     totalPrice: number;
     shippingProvider?: string | undefined;

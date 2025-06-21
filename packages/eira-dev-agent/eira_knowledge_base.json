@@ -46,7 +46,7 @@
         {
           "sprintId": "sprint_1750434660015",
           "sprintGoal": "To build the user-facing 'Aegis Command Center' and connect it to the Janus orchestrator. This sprint will prove the end-to-end flow by integrating the first specialized worker agent.",
-          "sprintStatus": "planned",
+          "sprintStatus": "completed",
           "tasks": [
             {
               "taskId": "task_1750434660015_3fhu229",
@@ -71,7 +71,7 @@
             {
               "taskId": "task_1750434660015_tyl2ztl",
               "taskDescription": "Integrate Lyra with Janus, enabling Janus to delegate 'product scouting' tasks to Lyra and return the results to the Command Center UI.",
-              "status": "pending"
+              "status": "completed"
             }
           ],
           "currentTaskId": null
@@ -79,32 +79,98 @@
         {
           "sprintId": "sprint_1750434712591",
           "sprintGoal": "To achieve the first revenue-generating capability by integrating with Shopify, allowing the swarm to manage products directly on an e-commerce store.",
-          "sprintStatus": "planned",
+          "sprintStatus": "completed",
           "tasks": [
             {
               "taskId": "task_1750434712591_5eyns9a",
               "taskDescription": "Implement the core logic for the Fornax (Merchandiser) agent in packages/aegis-core/src/agents/fornax.ts.",
-              "status": "pending"
+              "status": "completed"
             },
             {
               "taskId": "task_1750434712591_n0msivv",
               "taskDescription": "Create a new, robust ShopifyTool that allows an agent to perform actions like creating, updating, and retrieving products via the Shopify API.",
-              "status": "pending"
+              "status": "completed"
             },
             {
               "taskId": "task_1750434712591_7nfaqik",
               "taskDescription": "Securely manage API keys and credentials for Shopify using environment variables and a configuration service.",
-              "status": "pending"
+              "status": "completed"
             },
             {
               "taskId": "task_1750434712591_f01selj",
               "taskDescription": "Integrate Fornax with Janus, enabling a workflow where Lyra finds a product and Fornax lists it on the store.",
-              "status": "pending"
+              "status": "completed"
             },
             {
               "taskId": "task_1750434712591_tmf94sh",
               "taskDescription": "Implement basic scaffolding for the Corvus (Concierge) and Argent (Accountant) agents to prepare for future order processing and financial tracking.",
-              "status": "pending"
+              "status": "completed"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750506040692",
+          "sprintGoal": "Get the core transaction flow working by implementing order management, automated fulfillment, and customer communication.",
+          "sprintStatus": "completed",
+          "tasks": [
+            {
+              "taskId": "task_1750506040693_7qnh00a",
+              "taskDescription": "Enhance the ShopifyTool to include functions for retrieving order data (e.g., getOrders, getOrderById).",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750506040693_j5vf180",
+              "taskDescription": "Enhance the CJDropshippingApiTool to include a function for creating an order.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750506040693_qodztvh",
+              "taskDescription": "Implement the Argent (Accountant) agent's logic to use the new ShopifyTool function to fetch and log new sales and costs.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750506040693_3hf2d2k",
+              "taskDescription": "Implement a basic CommunicationTool for Corvus to send order confirmation emails.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750506040693_9s7uf7p",
+              "taskDescription": "Integrate all new capabilities into the Janus orchestrator's main workflow.",
+              "status": "completed"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750516296788",
+          "sprintGoal": "Implement the initial marketing and profit-optimization capabilities.",
+          "sprintStatus": "completed",
+          "tasks": [
+            {
+              "taskId": "task_1750516296788_ni1r1y7",
+              "taskDescription": "Create Caelus Agent: Scaffold the Caelus agent file.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750516296788_ur3de7m",
+              "taskDescription": "Create Ad Platform Tool: Build the initial FacebookAdsTool or GoogleAdsTool. It only needs one function for now: createCampaign.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750516296788_3x1t220",
+              "taskDescription": "Integrate Caelus with Janus: Allow Janus to delegate 'launch ad campaign' tasks to Caelus.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750516296788_wsh3rk5",
+              "taskDescription": "Enhance Corvus Logic for Upselling: Implement the 'Post-Purchase Upsell' email logic for Corvus.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750516296788_cy320xw",
+              "taskDescription": "Enhance Argent Logic for Daily P&L Reports: Implement the 'Daily P&L Report' so we have immediate financial feedback.",
+              "status": "completed"
             }
           ],
           "currentTaskId": null

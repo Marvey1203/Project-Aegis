@@ -31,6 +31,7 @@
     "axios": "^1.10.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "facebook-nodejs-business-sdk": "^23.0.0",
     "resend": "^4.6.0",
     "ts-node": "^10.9.2",
     "zod": "^3.25.64",
