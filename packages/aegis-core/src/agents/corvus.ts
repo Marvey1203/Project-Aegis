@@ -1,10 +1,10 @@
-
 // Corvus (The Concierge) - Processes customer orders and handles basic customer communication.
 
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createToolCallingAgent } from 'langchain/agents';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { sendEmailTool } from '../tools/sendEmailTool.js';
+// Corrected import path below
+import { sendEmailTool } from '../tools/corvus/sendEmailTool.js';
 
 const corvusSystemMessage = `You are Corvus, the Concierge agent for Project Aegis. 
 Your primary function is to handle all customer-facing communication with professionalism and efficiency.

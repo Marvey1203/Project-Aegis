@@ -1,7 +1,6 @@
-// src/agent/eira.ts
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
-import { allTools as tools } from '../tools/index.js';
+import { getTools } from '../tools/index.js';
 import { HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { Annotation } from '@langchain/langgraph';
 export const AgentStateSchema = Annotation.Root({
@@ -9,12 +8,12 @@ export const AgentStateSchema = Annotation.Root({
         reducer: (x, y) => x.concat(y),
         default: () => [],
     }),
+    retries: Annotation({
+        value: (x, y) => y,
+        default: () => 0,
+    }),
 });
-let agent = null;
-/**
- * Create the Eira agent with embedded mid-term memory inside system message.
- * @param midTermMemory The string content of mid-term memory to inject.
- */
+const agent = null;
 export function getAgent(midTermMemory) {
     const llm = new ChatGoogleGenerativeAI({
         model: 'gemini-2.5-pro',
@@ -28,9 +27,9 @@ export function getAgent(midTermMemory) {
         ],
         verbose: true,
     });
-    // Don't include system message in the prompt template - let the workflow handle it
     const prompt = ChatPromptTemplate.fromMessages([
         new MessagesPlaceholder('messages'),
     ]);
+    const tools = getTools();
     return prompt.pipe(llm.bindTools(tools));
 }

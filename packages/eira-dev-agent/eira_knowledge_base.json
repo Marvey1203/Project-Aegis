@@ -1,0 +1,121 @@
+{
+  "activeContext": {
+    "projectId": "project-aegis",
+    "sprintId": null,
+    "taskId": null
+  },
+  "projects": [
+    {
+      "projectId": "project-aegis",
+      "projectName": "Project Aegis",
+      "projectDescription": "To architect and build a fully autonomous, self-sustaining, and ethically-aligned Synthetic Economic Entity capable of operating e-commerce brands under human strategic partnership.",
+      "sprints": [
+        {
+          "sprintId": "sprint_1750434601909",
+          "sprintGoal": "To build the foundational backend services, including the main orchestrator agent (Janus), define the central data structures, and create the initial agent scaffolding. This sprint focuses on creating the 'brain' and 'nervous system' of the swarm.",
+          "sprintStatus": "completed",
+          "tasks": [
+            {
+              "taskId": "task_1750434601909_vmzdpu9",
+              "taskDescription": "Define the core database schemas for Products, Orders, and Customers in a new file: packages/aegis-core/src/schemas.ts.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434601909_bp7n44q",
+              "taskDescription": "Implement the basic scaffolding for the Janus (Orchestrator) agent in packages/aegis-core/src/agents/janus.ts, including setting up its state machine using LangGraph.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434601909_lsk58tt",
+              "taskDescription": "Implement the scaffolding for the Akasha (Librarian) agent in packages/aegis-core/src/agents/akasha.ts to handle knowledge and memory.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434601909_t1878ts",
+              "taskDescription": "Create a simple API server (e.g., using Express or Fastify) within aegis-core that exposes a single endpoint for Janus to receive commands.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434601909_ft0ed9k",
+              "taskDescription": "Refine the directory structure within aegis-core to cleanly separate agents, tools, and services.",
+              "status": "completed"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750434660015",
+          "sprintGoal": "To build the user-facing 'Aegis Command Center' and connect it to the Janus orchestrator. This sprint will prove the end-to-end flow by integrating the first specialized worker agent.",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750434660015_3fhu229",
+              "taskDescription": "Overhaul the boilerplate aegis-dashboard UI, replacing the default page with a functional chat interface using the Vercel AI SDK.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434660015_8vxik2r",
+              "taskDescription": "Connect the new chat interface to the Janus API endpoint created in Sprint 1, allowing human commands to be sent to the backend.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434660015_znsgxa1",
+              "taskDescription": "Implement the core logic for the Lyra (Product Scout) agent in packages/aegis-core/src/agents/lyra.ts.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434660015_7jq15yf",
+              "taskDescription": "Equip Lyra with a web scraping tool to allow it to browse and analyze supplier websites like CJ Dropshipping.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750434660015_tyl2ztl",
+              "taskDescription": "Integrate Lyra with Janus, enabling Janus to delegate 'product scouting' tasks to Lyra and return the results to the Command Center UI.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750434712591",
+          "sprintGoal": "To achieve the first revenue-generating capability by integrating with Shopify, allowing the swarm to manage products directly on an e-commerce store.",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750434712591_5eyns9a",
+              "taskDescription": "Implement the core logic for the Fornax (Merchandiser) agent in packages/aegis-core/src/agents/fornax.ts.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750434712591_n0msivv",
+              "taskDescription": "Create a new, robust ShopifyTool that allows an agent to perform actions like creating, updating, and retrieving products via the Shopify API.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750434712591_7nfaqik",
+              "taskDescription": "Securely manage API keys and credentials for Shopify using environment variables and a configuration service.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750434712591_f01selj",
+              "taskDescription": "Integrate Fornax with Janus, enabling a workflow where Lyra finds a product and Fornax lists it on the store.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750434712591_tmf94sh",
+              "taskDescription": "Implement basic scaffolding for the Corvus (Concierge) and Argent (Accountant) agents to prepare for future order processing and financial tracking.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        }
+      ],
+      "currentSprintId": null,
+      "keyFileLocations": [],
+      "projectSummary": ""
+    }
+  ],
+  "knowledgeBase": [],
+  "userPreferences": {},
+  "sessionSummaries": []
+}

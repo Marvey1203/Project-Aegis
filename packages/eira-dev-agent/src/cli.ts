@@ -10,8 +10,8 @@ import { loadMemory, saveMemory } from './memoryUtils.js';
 const memoryFilePath = 'eira_mid_term_memory.json';
 
 async function main() {
-  console.log("--- Eira Interactive CLI v1.5 (Human-in-the-Loop) ---");
-  console.log("Initializing agent and loading memory...");
+  console.log('--- Eira Interactive CLI v1.5 (Human-in-the-Loop) ---');
+  console.log('Initializing agent and loading memory...');
 
   const eira = EiraAgent.create();
   const rl = readline.createInterface({ input, output });
@@ -22,7 +22,7 @@ async function main() {
     console.log(`Loaded ${interactionCount} previous interactions from memory.`);
   }
 
-  console.log("\nEira is ready. You can start the conversation. Type 'exit' to end.\n");
+  console.log('\nEira is ready. You can start the conversation. Type \'exit\' to end.\n');
 
   let nextUserInput = await rl.question('Marius: ');
 
@@ -46,7 +46,7 @@ async function main() {
       ) {
         // The agent's main content already includes the question.
         // We just need to display it and then prompt for the next input.
-        const eiraResponseContent = typeof lastMessage.content === "string"
+        const eiraResponseContent = typeof lastMessage.content === 'string'
           ? lastMessage.content.trim()
           : JSON.stringify(lastMessage.content, null, 2);
         console.log(`\nEira: ${eiraResponseContent}\n`);
@@ -56,7 +56,7 @@ async function main() {
 
       } else {
         // This is a normal turn where the agent finished its thought.
-        const eiraResponseContent = lastMessage?.content ?? "[Eira took an action without speaking]";
+        const eiraResponseContent = lastMessage?.content ?? '[Eira took an action without speaking]';
         console.log(`\nEira: ${eiraResponseContent}\n`);
         
         // Prompt for the next turn
@@ -64,8 +64,8 @@ async function main() {
       }
 
     } catch (error) {
-      console.error("\nError during agent execution:", error);
-      nextUserInput = await rl.question("An error occurred. Please try again or type 'exit'.\nMarius: ");
+      console.error('\nError during agent execution:', error);
+      nextUserInput = await rl.question('An error occurred. Please try again or type \'exit\'.\nMarius: ');
     }
   }
 
@@ -74,6 +74,6 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error("\nA critical error occurred in the Eira CLI:", err);
+  console.error('\nA critical error occurred in the Eira CLI:', err);
   process.exit(1);
 });

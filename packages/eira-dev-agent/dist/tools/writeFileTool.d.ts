@@ -4,15 +4,15 @@ export declare const writeFileTool: DynamicStructuredTool<z.ZodObject<{
     filePath: z.ZodString;
     content: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    filePath: string;
     content: string;
+    filePath: string;
 }, {
-    filePath: string;
     content: string;
+    filePath: string;
 }>, {
-    filePath: string;
     content: string;
+    filePath: string;
 }, {
-    filePath: string;
     content: string;
+    filePath: string;
 }, any>;

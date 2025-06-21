@@ -5,19 +5,19 @@ export declare const updateSprintStatusTool: DynamicStructuredTool<z.ZodObject<{
     sprintId: z.ZodString;
     status: z.ZodEnum<["planned", "active", "completed", "on-hold"]>;
 }, "strip", z.ZodTypeAny, {
-    status: "planned" | "active" | "completed" | "on-hold";
+    status: "completed" | "planned" | "active" | "on-hold";
     projectId: string;
     sprintId: string;
 }, {
-    status: "planned" | "active" | "completed" | "on-hold";
+    status: "completed" | "planned" | "active" | "on-hold";
     projectId: string;
     sprintId: string;
 }>, {
-    status: "planned" | "active" | "completed" | "on-hold";
+    status: "completed" | "planned" | "active" | "on-hold";
     projectId: string;
     sprintId: string;
 }, {
-    status: "planned" | "active" | "completed" | "on-hold";
+    status: "completed" | "planned" | "active" | "on-hold";
     projectId: string;
     sprintId: string;
 }, string>;

@@ -1,10 +1,11 @@
 // src/agent/eiraAgent.ts
 
-import { AgentStateSchema, AgentState, getAgent } from "./eira.js";
-import { StateGraph, START, END } from "@langchain/langgraph";
-import { BaseMessage, AIMessage, ToolMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { allTools as tools } from "../tools/index.js";
-import { readFilesTool } from "../tools/readFilesTool.js";
+import { AgentStateSchema, AgentState, getAgent } from './eira.js';
+import { StateGraph, START, END } from '@langchain/langgraph';
+import { BaseMessage, AIMessage, ToolMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+// Corrected: Import getTools instead of allTools
+import { getTools } from '../tools/index.js';
+import { readFilesTool } from '../tools/readFilesTool.js';
 import pRetry from 'p-retry';
 import fs from 'fs';
 import path from 'path';
@@ -14,12 +15,12 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const MEMORY_PATH = path.resolve(__dirname, "../../eira_mid_term_memory.json");
+const MEMORY_PATH = path.resolve(__dirname, '../../eira_mid_term_memory.json');
 
 const fileSystemWriteTools = [
-  "writeFileTool",
-  "createFileTool",
-  "findAndReplaceInFileTool",
+  'writeFileTool',
+  'createFileTool',
+  'findAndReplaceInFileTool',
 ];
 
 // No changes needed for loadMidTermMemory, agentNode, customToolsNode, etc.
@@ -64,10 +65,10 @@ const agentNode = async (state: AgentState) => {
     });
 
     const lastMessage = validMessages[validMessages.length - 1];
-    let messages = [memoryContext, ...validMessages];
+    const messages = [memoryContext, ...validMessages];
 
     if (!(lastMessage instanceof HumanMessage)) {
-      messages.push(new HumanMessage("Could you please clarify your next steps or intentions?"));
+      messages.push(new HumanMessage('Could you please clarify your next steps or intentions?'));
     }
 
     const response = await agent.invoke({ messages });
@@ -92,9 +93,10 @@ const customToolsNode = async (state: AgentState): Promise<{ messages: ToolMessa
   const { messages } = state;
   const lastAiMessage = [...messages].reverse().find((m): m is AIMessage => m instanceof AIMessage);
 
-  if (!lastAiMessage?.tool_calls) throw new Error("No tool calls found in the last AI message.");
+  if (!lastAiMessage?.tool_calls) throw new Error('No tool calls found in the last AI message.');
 
-  const toolsByName = Object.fromEntries(tools.map(tool => [tool.name, tool]));
+  const tools = getTools();
+  const toolsByName = Object.fromEntries(tools.map((tool: any) => [tool.name, tool]));
   const toolExecutionResults: ToolMessage[] = [];
 
   for (const toolCall of lastAiMessage.tool_calls) {
@@ -150,7 +152,7 @@ const customToolsNode = async (state: AgentState): Promise<{ messages: ToolMessa
 
 const validatePlanNode = async (state: AgentState) => {
   try {
-    const plan = state.messages[state.messages.length - 1]?.content ?? "";
+    const plan = state.messages[state.messages.length - 1]?.content ?? '';
     const memory = loadMidTermMemory();
     const escapedMemory = JSON.stringify(memory).slice(0, 1000).replace(/\{/g, '\\{').replace(/\}/g, '\\}');
     const systemMessage = new SystemMessage(`You are Eira's internal critic. Analyze this plan for logic, feasibility, and consistency with memory. Memory Context: ${escapedMemory}`);
@@ -163,7 +165,7 @@ const validatePlanNode = async (state: AgentState) => {
     if (
       response instanceof AIMessage &&
       typeof response.content === 'string' &&
-      response.content.toLowerCase().includes("should be rejected")
+      response.content.toLowerCase().includes('should be rejected')
     ) {
       return { messages: [new SystemMessage(`Plan rejected. Critique: ${response.content}`)] };
     }
@@ -176,10 +178,17 @@ const validatePlanNode = async (state: AgentState) => {
   }
 };
 
+// src/agent/eiraAgent.ts
 const handleErrorNode = async (state: AgentState) => {
-  const lastMessage = state.messages[state.messages.length - 1];
+  const currentRetries = state.retries ?? 0;
+  if (currentRetries > 2) { // Max 2 retries
+    return {
+      messages: [new AIMessage('I have tried to recover multiple times and have failed. I require human assistance.')],
+    };
+  }
   return {
-    messages: [new AIMessage(`An error occurred: ${lastMessage.content || "Unknown error"}. Attempting recovery.`)],
+    messages: [new AIMessage(`An error occurred. Attempting recovery (attempt ${currentRetries + 1}).`)],
+    retries: currentRetries + 1, // Increment retry counter
   };
 };
 
@@ -190,7 +199,7 @@ const postExecutionReflectionNode = async (state: AgentState) => {
       return {};
     }
 
-    const usedTools = toolMessages.map((m) => m.content).join("\n");
+    const usedTools = toolMessages.map((m) => m.content).join('\n');
     const memory = loadMidTermMemory();
     const escapedMemory = JSON.stringify(memory).slice(0, 1000).replace(/\{/g, '\\{').replace(/\}/g, '\\}');
     const systemMessage = new SystemMessage(`You are Eira's reflection module. Reflect on recent execution and what to remember. Memory Context: ${escapedMemory}`);
@@ -210,16 +219,16 @@ const postExecutionReflectionNode = async (state: AgentState) => {
 const shouldCallTools = (state: AgentState) => {
   const lastMessage = state.messages[state.messages.length - 1];
 
-  if (lastMessage.content && typeof lastMessage.content === 'string' && lastMessage.content.startsWith("An error occurred")) {
-    return "error";
+  if (lastMessage.content && typeof lastMessage.content === 'string' && lastMessage.content.startsWith('An error occurred')) {
+    return 'error';
   }
 
   if (lastMessage instanceof AIMessage && lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
     const hasConfirmationCall = lastMessage.tool_calls.some(
-      (call) => call.name === "humanConfirmationTool"
+      (call) => call.name === 'humanConfirmationTool'
     );
     const hasAskHumanCall = lastMessage.tool_calls.some(
-      (call) => call.name === "askHumanForHelpTool"
+      (call) => call.name === 'askHumanForHelpTool'
     );
 
     // *** NEW LOGIC ***
@@ -230,12 +239,12 @@ const shouldCallTools = (state: AgentState) => {
     }
     
     // Otherwise, these are normal tools to be executed.
-    return "tools";
+    return 'tools';
   }
 
   // If the message is a text-only plan, it needs validation.
   if (lastMessage instanceof AIMessage) {
-    return "validate_plan";
+    return 'validate_plan';
   }
 
   return END;
@@ -243,29 +252,29 @@ const shouldCallTools = (state: AgentState) => {
 
 // --- GRAPH DEFINITION ---
 const workflow = new StateGraph(AgentStateSchema)
-  .addNode("agent", agentNode)
-  .addNode("tools", customToolsNode)
-  .addNode("error", handleErrorNode)
-  .addNode("validate_plan", validatePlanNode)
-  .addNode("reflect", postExecutionReflectionNode);
+  .addNode('agent', agentNode)
+  .addNode('tools', customToolsNode)
+  .addNode('error', handleErrorNode)
+  .addNode('validate_plan', validatePlanNode)
+  .addNode('reflect', postExecutionReflectionNode);
 
-workflow.addEdge(START, "agent");
+workflow.addEdge(START, 'agent');
 
-workflow.addConditionalEdges("agent", shouldCallTools, {
-  tools: "tools",
-  validate_plan: "validate_plan",
-  error: "error",
+workflow.addConditionalEdges('agent', shouldCallTools, {
+  tools: 'tools',
+  validate_plan: 'validate_plan',
+  error: 'error',
   [END]: END,
 });
 
 // This edge is correct: after validation, always loop back to the agent
 // with the critic's feedback.
-workflow.addEdge("validate_plan", "agent");
+workflow.addEdge('validate_plan', 'agent');
 
 // The rest of the graph logic is correct.
-workflow.addEdge("tools", "reflect");
-workflow.addEdge("reflect", "agent");
-workflow.addEdge("error", "agent");
+workflow.addEdge('tools', 'reflect');
+workflow.addEdge('reflect', 'agent');
+workflow.addEdge('error', 'agent');
 
 export const graph = workflow.compile();
 
@@ -279,7 +288,7 @@ export class EiraAgent {
 
   async run(userInput: string, chatHistory: BaseMessage[]): Promise<BaseMessage[]> {
     if (!userInput || userInput.trim() === '') {
-      throw new Error("Empty user input");
+      throw new Error('Empty user input');
     }
 
     const initialMessages = [...chatHistory, new HumanMessage(userInput)];
@@ -290,14 +299,14 @@ export class EiraAgent {
 
   private async invoke(input: { messages: BaseMessage[] }) {
     if (!input.messages || input.messages.length === 0) {
-      throw new Error("No messages provided to agent");
+      throw new Error('No messages provided to agent');
     }
 
     const cleanedMessages = input.messages.filter(msg => !(msg instanceof SystemMessage));
 
     const lastHumanIndex = [...cleanedMessages].reverse().findIndex(msg => msg instanceof HumanMessage);
     if (lastHumanIndex === -1) {
-      cleanedMessages.push(new HumanMessage("What would you like to do next?"));
+      cleanedMessages.push(new HumanMessage('What would you like to do next?'));
     }
     
     const midTermMemory = loadMidTermMemory();

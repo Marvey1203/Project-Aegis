@@ -16,3 +16,4 @@ declare class SendEmailTool extends Tool {
 }
 export declare const sendEmailTool: SendEmailTool;
 export {};
+//# sourceMappingURL=sendEmailTool.d.ts.map
