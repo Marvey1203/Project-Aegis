@@ -19,8 +19,8 @@ export const AgentStateSchema = Annotation.Root({
 
 export type AgentState = typeof AgentStateSchema.State;
 
-const agent: Runnable | null = null;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getAgent(midTermMemory: string): Runnable {
   const llm = new ChatGoogleGenerativeAI({
     model: 'gemini-2.5-pro',

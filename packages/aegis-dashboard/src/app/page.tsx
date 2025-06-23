@@ -1,9 +1,13 @@
+// packages/aegis-dashboard/src/app/page.tsx
+
 'use client';
 
 import { useChat } from '@ai-sdk/react';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: '/api/chat',
+  });
 
   return (
     <div className="flex flex-col w-full h-screen max-h-screen bg-gray-900 text-white">
@@ -16,16 +20,15 @@ export default function Chat() {
           {messages.map(m => (
             <div
               key={m.id}
-              className={`whitespace-pre-wrap p-4 rounded-lg max-w-xl ${
-                m.role === 'user'
-                  ? 'bg-blue-900 self-end'
-                  : 'bg-gray-800 self-start'
+              className={`p-4 rounded-lg max-w-3xl ${
+                m.role === 'user' ? 'bg-blue-900 self-end' : 'bg-gray-800 self-start'
               }`}
             >
-              <strong className="font-bold capitalize">
-                {m.role === 'user' ? 'Operator' : 'Janus'}:
+              <strong className="font-bold capitalize block mb-2">
+                {m.role === 'user' ? 'Operator' : 'Janus Mission Report'}:
               </strong>
-              <div className="mt-2">{m.content}</div>
+              {/* This class is essential for rendering the report correctly */}
+              <div className="text-sm font-mono whitespace-pre-wrap">{m.content}</div>
             </div>
           ))}
         </div>

@@ -1,6 +1,12 @@
+// packages/aegis-core/src/agents/janus.ts
 import { StateGraph, END, START, Annotation } from "@langchain/langgraph";
-import { caelusExecutor } from "./caelus.js"; // Import the Caelus agent
-// Define the state for our Janus agent
+import { lyraExecutor } from "./lyra.js";
+import { fornaxExecutor } from "./fornax.js";
+import { argentExecutor } from "./argent.js";
+import { corvusExecutor } from "./corvus.js";
+import { caelusExecutor } from "./caelus.js";
+import { AkashaAgent } from "./akasha.js";
+const akashaExecutor = AkashaAgent;
 const JanusState = Annotation.Root({
     input: Annotation(),
     plan: Annotation({ reducer: (x, y) => y, default: () => [] }),
@@ -8,71 +14,129 @@ const JanusState = Annotation.Root({
     productData: Annotation({ reducer: (x, y) => y, default: () => null }),
     orderData: Annotation({ reducer: (x, y) => y, default: () => null }),
     response: Annotation(),
+    proposedAdSpend: Annotation({ reducer: (x, y) => y, default: () => 20.00 }),
 });
-// This function now generates a more complete, realistic plan
 async function planStep(state) {
-    console.log("---JANUS: PLANNING STEP---");
-    // Updated dummy plan to include a marketing step
+    console.log("---JANUS: V1 LAUNCH PLAN INITIATED---");
     const plan = [
-        `Delegate to Lyra to find products related to: ${state.input}`,
-        `Delegate to Fornax to list the found product.`,
-        `Delegate to Caelus to create an ad campaign for the new product.`,
-        `Delegate to Argent to check for new orders.`,
-        `Delegate to Corvus to handle fulfillment and communication.`,
-        "Report completion to the user.",
+        `0. CONSULT_SHORTLIST: Use Akasha to check for promising products.`,
+        `1. SCOUT: Use Lyra to find a product based on the input: '${state.input}'.`,
+        `2. LIST: Use Fornax to list the scouted product on Shopify.`,
+        `3. CHECK_FINANCES: Use Argent to approve the initial ad spend.`,
+        `4. MARKET: Use Caelus to create an ad campaign for the new product.`,
+        `5. MONITOR: Use Argent to check for new orders for the listed product.`,
+        `6. FULFILL: Use Corvus to place a fulfillment order with the supplier.`,
+        `7. VERIFY_FULFILLMENT: Use Corvus to verify the supplier order was successful.`,
+        `8. NOTIFY: Use Corvus to send a confirmation email to the customer.`,
+        `9. REPORT: Use Argent to log the final transaction details.`,
     ];
     return { plan };
 }
-// This function now delegates to all our specialized agents
 async function executeStep(state) {
     console.log("---JANUS: EXECUTING STEP---");
-    if (state.plan.length === 0) {
-        return { response: "No plan to execute." };
+    if (!state.plan || state.plan.length === 0) {
+        return { response: "Execution complete. No further steps in the plan." };
     }
     const currentStep = state.plan[0];
-    let result = "";
-    console.log("Executing:", currentStep);
+    let result = null;
+    let resultOutput = "";
+    const updates = {};
+    console.log(`Executing: ${currentStep}`);
     try {
-        if (currentStep.toLowerCase().includes("lyra")) {
-            // ... (Lyra delegation logic remains the same)
+        // --- Agent Invocations ---
+        if (currentStep.startsWith("0. CONSULT_SHORTLIST")) {
+            result = await akashaExecutor.invoke({ query: '{"action": "get"}' });
         }
-        else if (currentStep.toLowerCase().includes("fornax")) {
-            // ... (Fornax delegation logic remains the same)
+        else if (currentStep.startsWith("1. SCOUT")) {
+            result = await lyraExecutor.invoke({ input: state.input });
         }
-        else if (currentStep.toLowerCase().includes("caelus")) { // --- NEW DELEGATION LOGIC FOR CAELUS ---
-            console.log("Delegating to Caelus agent...");
-            // We would pass more specific data in a real scenario
-            const caelusResult = await caelusExecutor.invoke({ input: "Create a new campaign for the latest product." });
-            if (typeof caelusResult === 'object' && caelusResult !== null && 'output' in caelusResult) {
-                result = caelusResult.output;
+        else if (currentStep.startsWith("2. LIST")) {
+            if (!state.productData || state.productData.raw)
+                throw new Error("CRITICAL: Cannot list product, no valid productData from SCOUT step.");
+            result = await fornaxExecutor.invoke({ input: JSON.stringify(state.productData) });
+        }
+        else if (currentStep.startsWith("3. CHECK_FINANCES")) {
+            result = await argentExecutor.invoke({ input: JSON.stringify({ spend: state.proposedAdSpend }) });
+        }
+        else if (currentStep.startsWith("4. MARKET")) {
+            if (!state.productData || state.productData.raw)
+                throw new Error("CRITICAL: Cannot market product, no valid productData from SCOUT step.");
+            result = await caelusExecutor.invoke({ input: JSON.stringify(state.productData) });
+        }
+        else if (currentStep.startsWith("5. MONITOR")) {
+            result = await argentExecutor.invoke({ input: '{"status": "open"}' });
+        }
+        else if (currentStep.startsWith("6. FULFILL") || currentStep.startsWith("7. VERIFY_FULFILLMENT") || currentStep.startsWith("8. NOTIFY")) {
+            if (!state.orderData || state.orderData.length === 0 || state.orderData[0]?.raw) {
+                console.log(`Skipping fulfillment step: No valid orders to process.`);
+                resultOutput = "No orders to process.";
             }
             else {
-                result = `Received an unexpected response structure from Caelus: ${JSON.stringify(caelusResult)}`;
+                result = await corvusExecutor.invoke({ input: `Execute step: ${currentStep} with order data: ${JSON.stringify(state.orderData)}` });
             }
         }
-        else if (currentStep.toLowerCase().includes("argent")) {
-            // ... (Argent delegation logic remains the same)
-        }
-        else if (currentStep.toLowerCase().includes("corvus")) {
-            // ... (Corvus delegation logic remains the same)
+        else if (currentStep.startsWith("9. REPORT")) {
+            if (!state.orderData)
+                throw new Error("Cannot report, no orderData in state.");
+            result = await argentExecutor.invoke({ input: JSON.stringify(state.orderData) });
         }
         else {
-            result = `Successfully executed placeholder step: ${currentStep}`;
+            resultOutput = "Unknown step. Cannot execute.";
+        }
+        if (result && result.output) {
+            resultOutput = typeof result.output === 'string' ? result.output : JSON.stringify(result.output);
+        }
+        else if (!resultOutput) {
+            throw new Error(`Agent for step '${currentStep}' returned a null or empty response.`);
+        }
+        // --- State Updates and Critical Step Checks (Circuit Breakers) ---
+        if (currentStep.startsWith("1. SCOUT")) {
+            // ** THE FINAL FIX IS HERE **
+            // This regex will find a JSON array or object within the string.
+            const jsonMatch = resultOutput.match(/```json\s*([\s\S]*?)\s*```|(\[[\s\S]*\])|({[\s\S]*})/);
+            if (jsonMatch) {
+                // We take the first non-null capture group
+                const extractedJson = jsonMatch[1] || jsonMatch[2] || jsonMatch[3];
+                try {
+                    updates.productData = JSON.parse(extractedJson);
+                    console.log("Successfully parsed JSON product data from Lyra.");
+                }
+                catch (e) {
+                    throw new Error(`CRITICAL FAILURE IN SCOUT: Failed to parse the extracted JSON. Error: ${e.message}. Halting plan.`);
+                }
+            }
+            else {
+                throw new Error(`CRITICAL FAILURE IN SCOUT: Could not find any JSON in the output from Lyra. Output was: "${resultOutput}". Halting plan.`);
+            }
+        }
+        if (currentStep.startsWith("5. MONITOR")) {
+            try {
+                const parsedOrders = JSON.parse(resultOutput);
+                updates.orderData = Array.isArray(parsedOrders) ? parsedOrders : [{ raw: resultOutput }];
+            }
+            catch {
+                console.log("Could not parse Monitor step output as JSON. Assuming no orders.");
+                updates.orderData = [{ raw: resultOutput }];
+            }
         }
     }
     catch (e) {
-        const error = e;
-        result = `Error occurred during delegation: ${error.message}`;
+        console.error(`---JANUS: ERROR DURING STEP '${currentStep}'---`);
+        console.error(e.message);
+        resultOutput = `Error during step '${currentStep}': ${e.message}`;
+        if (e.message.startsWith("CRITICAL")) {
+            console.log("---JANUS: CRITICAL FAILURE DETECTED, HALTING WORKFLOW---");
+            updates.plan = [];
+        }
     }
     return {
-        pastSteps: [[currentStep, result]],
-        plan: state.plan.slice(1),
+        ...updates,
+        pastSteps: [[currentStep, resultOutput]],
+        plan: updates.plan !== undefined ? updates.plan : state.plan.slice(1),
     };
 }
-// ... (shouldEnd function and graph definition remain the same)
 function shouldEnd(state) {
-    console.log("---JANUS: CHECKING IF FINISHED---");
-    if (state.plan.length === 0) {
+    if (!state.plan || state.plan.length === 0) {
         console.log("Plan complete. Ending execution.");
         return "end";
     }

@@ -1,11 +1,10 @@
-
 // src/tools/projectManagementTools.ts
 
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { readKnowledgeBase, writeKnowledgeBase, Project, Sprint, Task } from './knowledgeBaseUtils.js';
 
-// --- createProjectTool ---
+// --- createProjectTool (existing code, no changes) ---
 const CreateProjectToolSchema = z.object({
     projectName: z.string().describe('The descriptive name for the new project.'),
     projectId: z.string().optional().describe('A unique slug-like ID for the project. If not provided, it will be generated from the name.'),
@@ -51,7 +50,7 @@ export const createProjectTool = new DynamicStructuredTool({
 });
 
 
-// --- createSprintTool --- 
+// --- createSprintTool (existing code, no changes) --- 
 const CreateSprintToolArgsSchema = z.object({
   projectId: z.string().describe('The ID of the project to which this sprint will be added.'),
   sprintGoal: z.string().describe('The main objective or goal for the new sprint.'),
@@ -98,7 +97,7 @@ export const createSprintTool = new DynamicStructuredTool({
   func: createSprintLogic,
 });
 
-// --- createTaskTool --- 
+// --- createTaskTool (existing code, no changes) --- 
 const CreateTaskToolArgsSchema = z.object({
   projectId: z.string().describe('The ID of the project containing the sprint.'),
   sprintId: z.string().describe('The ID of the sprint to which this task will be added.'),
@@ -130,7 +129,7 @@ async function createTaskLogic(args: z.infer<typeof CreateTaskToolArgsSchema>): 
     }
 
     if (newTasks.length === 0) {
-        return JSON.stringify({ success: true, taskIds: [], message: "No new tasks were created as they already exist." });
+        return JSON.stringify({ success: true, taskIds: [], message: 'No new tasks were created as they already exist.' });
     }
 
     sprint.tasks.push(...newTasks);
@@ -147,4 +146,42 @@ export const createTaskTool = new DynamicStructuredTool({
   description: 'Creates one or more new tasks within a sprint.',
   schema: CreateTaskToolArgsSchema,
   func: createTaskLogic,
+});
+
+
+// --- NEW: findNextPendingTaskTool ---
+const FindNextPendingTaskToolSchema = z.object({
+    projectId: z.string().describe('The ID of the project to search within.'),
+    sprintId: z.string().describe('The ID of the sprint to search within.'),
+});
+
+async function findNextPendingTaskLogic(args: z.infer<typeof FindNextPendingTaskToolSchema>): Promise<string> {
+    try {
+        const kb = await readKnowledgeBase();
+        const project = kb.projects.find(p => p.projectId === args.projectId);
+        if (!project) {
+            return JSON.stringify({ success: false, task: null, message: `Error: Project with ID '${args.projectId}' not found.` });
+        }
+        const sprint = project.sprints.find(s => s.sprintId === args.sprintId);
+        if (!sprint) {
+            return JSON.stringify({ success: false, task: null, message: `Error: Sprint with ID '${args.sprintId}' not found.` });
+        }
+
+        const nextTask = sprint.tasks.find(t => t.status === 'pending');
+
+        if (nextTask) {
+            return JSON.stringify({ success: true, task: nextTask, message: `Next pending task found: ${nextTask.taskId}` });
+        } else {
+            return JSON.stringify({ success: true, task: null, message: 'All tasks in this sprint are complete.' });
+        }
+    } catch (error: any) {
+        return JSON.stringify({ success: false, task: null, message: `Error in findNextPendingTaskTool: ${error.message}` });
+    }
+}
+
+export const findNextPendingTaskTool = new DynamicStructuredTool({
+    name: 'findNextPendingTaskTool',
+    description: 'Finds the next pending task in a given sprint to determine the next action. Returns the task object or a message if no pending tasks are found.',
+    schema: FindNextPendingTaskToolSchema,
+    func: findNextPendingTaskLogic,
 });

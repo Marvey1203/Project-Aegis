@@ -1,4 +1,3 @@
-import 'dotenv/config';
 interface AppConfig {
     shopify: {
         storeDomain: string;

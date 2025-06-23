@@ -13,7 +13,7 @@ export const AgentStateSchema = Annotation.Root({
         default: () => 0,
     }),
 });
-const agent = null;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getAgent(midTermMemory) {
     const llm = new ChatGoogleGenerativeAI({
         model: 'gemini-2.5-pro',

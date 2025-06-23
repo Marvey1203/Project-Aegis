@@ -68,3 +68,19 @@ export declare const createTaskTool: DynamicStructuredTool<z.ZodObject<{
     sprintId: string;
     taskDescriptions: string[];
 }, string>;
+export declare const findNextPendingTaskTool: DynamicStructuredTool<z.ZodObject<{
+    projectId: z.ZodString;
+    sprintId: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    projectId: string;
+    sprintId: string;
+}, {
+    projectId: string;
+    sprintId: string;
+}>, {
+    projectId: string;
+    sprintId: string;
+}, {
+    projectId: string;
+    sprintId: string;
+}, string>;

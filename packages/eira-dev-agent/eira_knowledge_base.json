@@ -174,6 +174,219 @@
             }
           ],
           "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750539713227",
+          "sprintGoal": "Run the entire, integrated system in our Shopify development store to ensure every part works together as expected.",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750539713227_a4jy0dx",
+              "taskDescription": "Create a Comprehensive Test Plan.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750539713227_6eggjeh",
+              "taskDescription": "Execute End-to-End Test.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750539713227_dvumg97",
+              "taskDescription": "Identify and Log Bugs.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750539713227_xgyyv7d",
+              "taskDescription": "Deploy aegis-core to a Cloud Service.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750539713227_8kekcak",
+              "taskDescription": "Deploy aegis-dashboard to Vercel.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750543537643",
+          "sprintGoal": "To build our autonomous creative department by implementing the Aura agent and her AI image generation tools. This sprint is focused on giving our brand a unique visual identity.",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750543537643_oqea75n",
+              "taskDescription": "Create the Aura (Creative) Agent: Scaffold the Aura agent file in `packages/aegis-core/src/agents/aura.ts`.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543537643_v76v223",
+              "taskDescription": "Develop the `ImageGenerationTool`: Create a new tool for Aura that connects to an AI image generation API (e.g., DALL-E 3, Midjourney, Stable Diffusion).",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543537643_e2khheu",
+              "taskDescription": "Develop the `ImageToImageTool`: Create a more advanced tool for Aura that takes a source image URL and a text prompt to create a new, enhanced lifestyle photo.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543537643_6g4betw",
+              "taskDescription": "Integrate Aura with Janus: Update the Janus orchestrator to delegate 'create visual assets' tasks to the Aura agent.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543537643_sm6pjz1",
+              "taskDescription": "Update Fornax and Caelus to Use Aura's Images: Modify the Fornax and Caelus agents so they can receive and use the new, AI-generated image URLs.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750543579202",
+          "sprintGoal": "To implement the final, essential 'safety net' features and connect all agents into a continuous, autonomous operational loop, ready for launch.",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750543579202_2zyagz5",
+              "taskDescription": "Implement the 'Financial Circuit Breaker'.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543579202_qgx379b",
+              "taskDescription": "Implement Order Fulfillment Verification.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543579202_p2cymk5",
+              "taskDescription": "Implement the 'Product Shortlist' Database.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543579202_qgi0foz",
+              "taskDescription": "Implement Dynamic Planning for Janus.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750543579202_2q12wzb",
+              "taskDescription": "Final End-to-End Sandbox Test.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750625701374",
+          "sprintGoal": "To launch our first product and generate our first dollar of profit in the most direct way possible, using our existing agents and tools.",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750625701374_ymmlhkp",
+              "taskDescription": "Finalize the Core Workflow in Janus.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750625701374_kpukvqe",
+              "taskDescription": "Implement the 'Financial Circuit Breaker'.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750625701374_ca524mo",
+              "taskDescription": "Implement Order Fulfillment Verification.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750625701374_f7vns5z",
+              "taskDescription": "Implement a Basic 'Product Shortlist'.",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750625701374_2b5mzhu",
+              "taskDescription": "End-to-End Sandbox Test.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        },
+        {
+          "sprintId": "sprint_1750627749005",
+          "sprintGoal": "To implement the final, critical features for market analysis, financial safety, and creative generation, and then run a full end-to-end test to ensure the system is ready for a live, profitable launch.",
+          "sprintStatus": "planned",
+          "tasks": [
+            {
+              "taskId": "task_1750627749005_unmc5dj",
+              "taskDescription": "Implement Lyra's 'Trend Analysis' Tool.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750627749005_smom5rt",
+              "taskDescription": "Implement Caelus's 'Ad Library Spy' Tool.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750627749005_1qwerlh",
+              "taskDescription": "Implement the 'Product Lifecycle' Financial Strategy.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750627749005_yolcjiy",
+              "taskDescription": "Implement the 'Product Shortlist' Database.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750627749005_tin7qci",
+              "taskDescription": "Implement the Aura Agent & Image-to-Image Tool.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750627749005_om3x5nj",
+              "taskDescription": "Final End-to-End Sandbox Test.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
+        }
+      ],
+      "currentSprintId": null,
+      "keyFileLocations": [],
+      "projectSummary": ""
+    },
+    {
+      "projectId": "eira-self-improvement",
+      "projectName": "Eira Self-Improvement",
+      "projectDescription": "To continuously enhance Eira's capabilities, making her a more efficient, autonomous, and error-resistant AI software development agent.",
+      "sprints": [
+        {
+          "sprintId": "sprint_1750548353072",
+          "sprintGoal": "To implement foundational self-improvement features, focusing on autonomous learning and enhanced operational efficiency.",
+          "sprintStatus": "active",
+          "tasks": [
+            {
+              "taskId": "task_1750548353072_ve0u3gk",
+              "taskDescription": "Implement the \"Autonomous Learning\" module (structured error logging and solution archiving).",
+              "status": "completed"
+            },
+            {
+              "taskId": "task_1750548353072_dhimlp4",
+              "taskDescription": "Integrate the \"Autonomous Learning\" module into Eira's planning and code generation process (proactive consultation).",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750548353072_2fmwtbh",
+              "taskDescription": "Enhance Eira's context management and memory summarization.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750548353072_qrpx32a",
+              "taskDescription": "Implement integrated linting and formatting for Eira's code generation.",
+              "status": "pending"
+            },
+            {
+              "taskId": "task_1750548353072_t5yofpq",
+              "taskDescription": "Develop pre-flight checks for Eira's tool execution.",
+              "status": "pending"
+            }
+          ],
+          "currentTaskId": null
         }
       ],
       "currentSprintId": null,

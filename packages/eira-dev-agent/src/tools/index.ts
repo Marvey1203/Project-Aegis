@@ -2,7 +2,8 @@ import { tavilySearchTool } from './searchTools.js';
 import { getCurrentTimestampTool } from './dateTimeTools.js';
 import { findAndReplaceInFileTool } from './findAndReplaceInFileTool.js';
 import { addKnowledgeBaseEntryTool } from './knowledgeBaseTools.js';
-import { createProjectTool, createSprintTool, createTaskTool } from './projectManagementTools.js';
+// NEW: Import the new tool
+import { createProjectTool, createSprintTool, createTaskTool, findNextPendingTaskTool } from './projectManagementTools.js';
 import { basicPuppeteerScrapeTool, advancedScrapeTool } from './scrapingTools.js';
 import { askHumanForHelpTool } from './askHumanForHelpTool.js';
 import { createFileTool } from './createFileTool.js';
@@ -27,9 +28,8 @@ import { reviewMyKnowledgeBaseTool } from './reviewMyKnowledgeBaseTool.js';
 import { ingestDocumentationTool } from './ingestDocumentationTool.js';
 import { queryLocalDocsTool } from './queryLocalDocsTool.js';
 import { humanConfirmationTool } from './humanConfirmationTool.js';
-import { simpleHtmlScrapeTool } from './simpleHtmlScrapeTool.js'; // Added new tool import
+import { simpleHtmlScrapeTool } from './simpleHtmlScrapeTool.js';
 
-// Corrected: Using any[] to resolve the complex type inference issue.
 export function getTools(): any[] {
   return [
     tavilySearchTool,
@@ -39,6 +39,7 @@ export function getTools(): any[] {
     createProjectTool,
     createSprintTool,
     createTaskTool,
+    findNextPendingTaskTool, // NEW: Add the tool to the array
     basicPuppeteerScrapeTool,
     advancedScrapeTool,
     askHumanForHelpTool,
@@ -64,6 +65,6 @@ export function getTools(): any[] {
     ingestDocumentationTool,
     queryLocalDocsTool,
     humanConfirmationTool,
-    simpleHtmlScrapeTool, // Added new tool to the array
+    simpleHtmlScrapeTool,
   ];
 }

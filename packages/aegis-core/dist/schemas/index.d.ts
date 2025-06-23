@@ -115,15 +115,15 @@ export declare const ProductVariantSchema: z.ZodObject<{
     optionValue: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     id: string;
-    sku: string;
     price: number;
+    sku: string;
     inventory: number;
     optionName: string;
     optionValue: string;
 }, {
     id: string;
-    sku: string;
     price: number;
+    sku: string;
     inventory: number;
     optionName: string;
     optionValue: string;
@@ -145,15 +145,15 @@ export declare const ProductSchema: z.ZodObject<{
         optionValue: z.ZodString;
     }, "strip", z.ZodTypeAny, {
         id: string;
-        sku: string;
         price: number;
+        sku: string;
         inventory: number;
         optionName: string;
         optionValue: string;
     }, {
         id: string;
-        sku: string;
         price: number;
+        sku: string;
         inventory: number;
         optionName: string;
         optionValue: string;
@@ -162,16 +162,16 @@ export declare const ProductSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     id: string;
     title: string;
-    vendor: string;
     description: string;
-    createdAt: string;
     price: number;
+    vendor: string;
+    createdAt: string;
     tags?: string[] | undefined;
     images?: string[] | undefined;
     variants?: {
         id: string;
-        sku: string;
         price: number;
+        sku: string;
         inventory: number;
         optionName: string;
         optionValue: string;
@@ -179,16 +179,16 @@ export declare const ProductSchema: z.ZodObject<{
 }, {
     id: string;
     title: string;
-    vendor: string;
     description: string;
-    createdAt: string;
     price: number;
+    vendor: string;
+    createdAt: string;
     tags?: string[] | undefined;
     images?: string[] | undefined;
     variants?: {
         id: string;
-        sku: string;
         price: number;
+        sku: string;
         inventory: number;
         optionName: string;
         optionValue: string;
@@ -235,8 +235,8 @@ export declare const OrderSchema: z.ZodObject<{
     trackingNumber: z.ZodOptional<z.ZodString>;
     createdAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    id: string;
     status: "pending" | "paid" | "fulfilled" | "cancelled" | "refunded";
+    id: string;
     createdAt: string;
     customerId: string;
     lineItems: {
@@ -249,8 +249,8 @@ export declare const OrderSchema: z.ZodObject<{
     shippingProvider?: string | undefined;
     trackingNumber?: string | undefined;
 }, {
-    id: string;
     status: "pending" | "paid" | "fulfilled" | "cancelled" | "refunded";
+    id: string;
     createdAt: string;
     customerId: string;
     lineItems: {

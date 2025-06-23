@@ -3,14 +3,15 @@
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createToolCallingAgent } from 'langchain/agents';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-// Import the order-fetching tool
 import { shopifyGetOrdersTool } from '../tools/fornax/shopifyApiTool.js';
+import { financialCircuitBreakerTool } from '../tools/argent/financialCircuitBreakerTool.js'; // Import the new tool
 
 const argentSystemMessage = `You are Argent, the Accountant agent for Project Aegis.
-Your purpose is to track all financial transactions, including revenue, costs, and profit.
-You will be given financial data and will use your tools to record it, categorize it, and generate reports.
-Your primary tool is the 'shopifyGetOrdersTool', which you can use to fetch recent orders from our Shopify store.
-When asked to 'get new orders' or 'fetch sales', you should use this tool.
+Your purpose is to track all financial transactions and ensure financial safety.
+You have two primary tools:
+1. 'shopifyGetOrdersTool': Use this to fetch recent orders from our Shopify store when asked to 'get new orders' or 'fetch sales'.
+2. 'financialCircuitBreakerTool': Use this to check if a proposed ad spend is within budget. When asked to 'approve spend', you must use this tool.
+
 You must be precise, accurate, and adhere to all accounting principles.`;
 
 const prompt = ChatPromptTemplate.fromMessages([
@@ -24,8 +25,8 @@ const llm = new ChatGoogleGenerativeAI({
   temperature: 0,
 });
 
-// Equip Argent with the tool to get Shopify orders.
-const tools = [shopifyGetOrdersTool];
+// Equip Argent with both its tools
+const tools = [shopifyGetOrdersTool, financialCircuitBreakerTool];
 
 const agent = await createToolCallingAgent({
   llm,

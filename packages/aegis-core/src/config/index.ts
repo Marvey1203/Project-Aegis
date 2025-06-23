@@ -1,4 +1,6 @@
-import 'dotenv/config';
+// packages/aegis-core/src/config/index.ts
+
+// REMOVED: import 'dotenv/config'; <<< THIS WAS THE PROBLEM
 
 // Define a type for our configuration for type safety
 interface AppConfig {
@@ -32,6 +34,9 @@ export const config: AppConfig = {
 
 // Add a check to ensure all critical variables are loaded
 if (!config.shopify.storeDomain || !config.shopify.adminApiAccessToken) {
+  // Let's add a log to see what the values are, just in case.
+  console.log('SHOPIFY_STORE_DOMAIN value:', process.env.SHOPIFY_STORE_DOMAIN);
+  console.log('SHOPIFY_ADMIN_API_ACCESS_TOKEN value:', process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN);
   throw new Error('Missing required Shopify environment variables. Please check your .env file.');
 }
 

@@ -1,4 +1,4 @@
-import 'dotenv/config';
+// packages/aegis-core/src/config/index.ts
 // Read the environment variables and export them as a typed object
 export const config = {
     shopify: {
@@ -15,6 +15,9 @@ export const config = {
 };
 // Add a check to ensure all critical variables are loaded
 if (!config.shopify.storeDomain || !config.shopify.adminApiAccessToken) {
+    // Let's add a log to see what the values are, just in case.
+    console.log('SHOPIFY_STORE_DOMAIN value:', process.env.SHOPIFY_STORE_DOMAIN);
+    console.log('SHOPIFY_ADMIN_API_ACCESS_TOKEN value:', process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN);
     throw new Error('Missing required Shopify environment variables. Please check your .env file.');
 }
 if (!config.resend.apiKey) {

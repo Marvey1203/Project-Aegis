@@ -5,7 +5,7 @@ export declare const graph: import("@langchain/langgraph").CompiledStateGraph<im
 }>, import("@langchain/langgraph").UpdateType<{
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
     retries: import("@langchain/langgraph").BinaryOperatorAggregate<number, number>;
-}>, "__start__" | "agent" | "tools" | "error" | "validate_plan" | "reflect", {
+}>, "tools" | "__start__" | "agent" | "error" | "validate_plan" | "reflect", {
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
     retries: import("@langchain/langgraph").BinaryOperatorAggregate<number, number>;
 }, {
