@@ -1,3 +1,4 @@
+import { AgentState } from './eira.js';
 import { BaseMessage } from '@langchain/core/messages';
 export declare const graph: import("@langchain/langgraph").CompiledStateGraph<import("@langchain/langgraph").StateType<{
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
@@ -5,7 +6,7 @@ export declare const graph: import("@langchain/langgraph").CompiledStateGraph<im
 }>, import("@langchain/langgraph").UpdateType<{
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
     retries: import("@langchain/langgraph").BinaryOperatorAggregate<number, number>;
-}>, "tools" | "__start__" | "agent" | "error" | "validate_plan" | "reflect", {
+}>, "tools" | "__start__" | "architect", {
     messages: import("@langchain/langgraph").BinaryOperatorAggregate<BaseMessage[], BaseMessage[]>;
     retries: import("@langchain/langgraph").BinaryOperatorAggregate<number, number>;
 }, {
@@ -15,6 +16,5 @@ export declare const graph: import("@langchain/langgraph").CompiledStateGraph<im
 export declare class EiraAgent {
     private graph;
     static create(): EiraAgent;
-    run(userInput: string, chatHistory: BaseMessage[]): Promise<BaseMessage[]>;
-    private invoke;
+    invoke(state: AgentState): Promise<AgentState>;
 }

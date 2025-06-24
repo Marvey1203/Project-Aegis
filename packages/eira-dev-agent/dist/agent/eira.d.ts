@@ -5,4 +5,5 @@ export declare const AgentStateSchema: import("@langchain/langgraph").Annotation
     retries: import("@langchain/langgraph").BinaryOperatorAggregate<number, number>;
 }>;
 export type AgentState = typeof AgentStateSchema.State;
-export declare function getAgent(midTermMemory: string): Runnable;
+export declare function getWorkerAgent(): Runnable;
+export declare function getArchitectAgent(): Runnable;

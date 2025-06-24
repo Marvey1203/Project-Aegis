@@ -15,7 +15,7 @@ importers:
         version: 0.24.1
       '@langchain/community':
         specifier: ^0.2.21
-        version: 0.2.33(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(@langchain/langgraph@0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67)))(axios@1.10.0)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)
+        version: 0.2.33(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(@langchain/langgraph@0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67)))(axios@1.10.0)(chromadb@3.0.4)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)
       '@langchain/langgraph':
         specifier: ^0.3.4
         version: 0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67))
@@ -197,7 +197,7 @@ importers:
         version: 0.23.0
       '@langchain/community':
         specifier: ^0.2.21
-        version: 0.2.33(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(@langchain/langgraph@0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67)))(axios@1.10.0)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)
+        version: 0.2.33(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(@langchain/langgraph@0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67)))(axios@1.10.0)(chromadb@3.0.4)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)
       '@langchain/core':
         specifier: ^0.3.59
         version: 0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))
@@ -210,6 +210,9 @@ importers:
       axios:
         specifier: ^1.10.0
         version: 1.10.0
+      chromadb:
+        specifier: ^3.0.4
+        version: 3.0.4
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -2030,6 +2033,41 @@ packages:
   chownr@3.0.0:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
+
+  chromadb-js-bindings-darwin-arm64@0.1.3:
+    resolution: {integrity: sha512-TZq90O3QuVSfMZcYXWP8juP9q7O7ebSz7PsewW2deVJd3aihOnVxpZtxfwlFKYEDiWz5XwArL6xLBbKNYZGnLA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  chromadb-js-bindings-darwin-x64@0.1.3:
+    resolution: {integrity: sha512-ynIKTgcJ89YAhuGjp5E39E/gsjJ4IgRpGzVrsYSYfx4K449LaIx0yUdFsxx/QoY0Q5/AJDgUH6dG5DXgYg5LxA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  chromadb-js-bindings-linux-arm64-gnu@0.1.3:
+    resolution: {integrity: sha512-RLReKrGYygGbKWgh3Y9nGevl2/8/QXr6QHB8f03CbfogKwk7NGPjblO6O1P4gQMxU+b9kRldDWBOZbsvIlJt9g==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  chromadb-js-bindings-linux-x64-gnu@0.1.3:
+    resolution: {integrity: sha512-YMY4A0tYbmsiyV7ASS+aL7cp+QdoFpC6Q4AjBgpA9+Lh131eli0xIqrnwe3/YF5SkcAKK/1GcNXqSzx8P3eVLQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  chromadb-js-bindings-win32-x64-msvc@0.1.3:
+    resolution: {integrity: sha512-smVxJRVhUPPTW2G8mu4GizCvrcii3F1ZPp8CbNMvgWJhYi98CWN9KV3df3b12xRt76tIWIF/Lp5TgZfPnk4pmQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  chromadb@3.0.4:
+    resolution: {integrity: sha512-iic3ocrm/utHQ0h8S8VWv8fYh5KFa1CJuZpeaHd2Fy6PhfP/9YyZX3C1Q+nI24txUgAgMTWCqAtOlOm1Je4qmA==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   chromium-bidi@5.1.0:
     resolution: {integrity: sha512-9MSRhWRVoRPDG0TgzkHrshFSJJNZzfY5UFqUMuksg7zL1yoZIZ3jLB0YAgHclbiAxPI86pBnwDX1tbzoiV8aFw==}
@@ -4814,7 +4852,7 @@ snapshots:
     dependencies:
       jsep: 1.4.0
 
-  '@langchain/community@0.2.33(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(@langchain/langgraph@0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67)))(axios@1.10.0)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)':
+  '@langchain/community@0.2.33(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(@langchain/langgraph@0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67)))(axios@1.10.0)(chromadb@3.0.4)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)':
     dependencies:
       '@langchain/core': 0.2.36(openai@5.1.1(ws@8.18.2)(zod@3.25.67))
       '@langchain/openai': 0.2.11(ws@8.18.2)
@@ -4822,13 +4860,14 @@ snapshots:
       expr-eval: 2.0.2
       flat: 5.0.2
       js-yaml: 4.1.0
-      langchain: 0.2.20(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(axios@1.10.0)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)
+      langchain: 0.2.20(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(axios@1.10.0)(chromadb@3.0.4)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2)
       langsmith: 0.1.68(openai@5.1.1(ws@8.18.2)(zod@3.25.67))
       uuid: 10.0.0
       zod: 3.25.67
       zod-to-json-schema: 3.24.5(zod@3.25.67)
     optionalDependencies:
       '@langchain/langgraph': 0.3.4(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))(react@19.1.0)(zod-to-json-schema@3.24.5(zod@3.25.67))
+      chromadb: 3.0.4
       html-to-text: 9.0.5
       ignore: 5.3.2
       puppeteer: 24.10.2(typescript@5.8.3)
@@ -5807,6 +5846,31 @@ snapshots:
   check-error@2.1.1: {}
 
   chownr@3.0.0: {}
+
+  chromadb-js-bindings-darwin-arm64@0.1.3:
+    optional: true
+
+  chromadb-js-bindings-darwin-x64@0.1.3:
+    optional: true
+
+  chromadb-js-bindings-linux-arm64-gnu@0.1.3:
+    optional: true
+
+  chromadb-js-bindings-linux-x64-gnu@0.1.3:
+    optional: true
+
+  chromadb-js-bindings-win32-x64-msvc@0.1.3:
+    optional: true
+
+  chromadb@3.0.4:
+    dependencies:
+      semver: 7.7.2
+    optionalDependencies:
+      chromadb-js-bindings-darwin-arm64: 0.1.3
+      chromadb-js-bindings-darwin-x64: 0.1.3
+      chromadb-js-bindings-linux-arm64-gnu: 0.1.3
+      chromadb-js-bindings-linux-x64-gnu: 0.1.3
+      chromadb-js-bindings-win32-x64-msvc: 0.1.3
 
   chromium-bidi@5.1.0(devtools-protocol@0.0.1452169):
     dependencies:
@@ -7076,7 +7140,7 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  langchain@0.2.20(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(axios@1.10.0)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2):
+  langchain@0.2.20(@langchain/google-genai@0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67))))(axios@1.10.0)(chromadb@3.0.4)(html-to-text@9.0.5)(ignore@5.3.2)(openai@5.1.1(ws@8.18.2)(zod@3.25.67))(puppeteer@24.10.2(typescript@5.8.3))(ws@8.18.2):
     dependencies:
       '@langchain/core': 0.2.36(openai@5.1.1(ws@8.18.2)(zod@3.25.67))
       '@langchain/openai': 0.2.11(ws@8.18.2)
@@ -7095,6 +7159,7 @@ snapshots:
     optionalDependencies:
       '@langchain/google-genai': 0.2.13(@langchain/core@0.3.60(openai@5.1.1(ws@8.18.2)(zod@3.25.67)))
       axios: 1.10.0
+      chromadb: 3.0.4
       html-to-text: 9.0.5
       ignore: 5.3.2
       puppeteer: 24.10.2(typescript@5.8.3)

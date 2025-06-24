@@ -4,8 +4,37 @@ import 'dotenv/config';
 import { EiraAgent } from './agent/eiraAgent.js';
 import * as readline from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
-import { HumanMessage, BaseMessage, AIMessage } from '@langchain/core/messages'; // Import AIMessage
+import { HumanMessage, BaseMessage, AIMessage, ToolMessage } from '@langchain/core/messages';
 import { loadMemory, saveMemory } from './memoryUtils.js';
+import { AgentState } from './agent/eira.js';
+import { getTools } from './tools/index.js';
+
+// This function executes non-human tools. It's adapted from the agent's internal node.
+async function toolExecutorNode(state: AgentState): Promise<{ messages: ToolMessage[] }> {
+    const lastAiMessage = state.messages[state.messages.length - 1] as AIMessage;
+    if (!lastAiMessage?.tool_calls) {
+        throw new Error('toolExecutorNode was called but the preceding AI message had no tool_calls.');
+    }
+    const tools = getTools();
+    const toolsByName = Object.fromEntries(tools.map((tool: any) => [tool.name, tool]));
+    const toolExecutionResults: ToolMessage[] = [];
+
+    for (const toolCall of lastAiMessage.tool_calls) {
+        if (!toolCall.id) continue;
+        const tool = toolsByName[toolCall.name];
+        if (!tool) {
+            toolExecutionResults.push(new ToolMessage({ content: `Error: Tool '${toolCall.name}' not found.`, tool_call_id: toolCall.id, name: toolCall.name }));
+            continue;
+        }
+        try {
+            const observation = await tool.invoke(toolCall.args);
+            toolExecutionResults.push(new ToolMessage({ content: String(observation), tool_call_id: toolCall.id, name: toolCall.name, }));
+        } catch (e: any) {
+            toolExecutionResults.push(new ToolMessage({ content: `Tool '${toolCall.name}' failed with error: ${e.message}`, tool_call_id: toolCall.id, name: toolCall.name, }));
+        }
+    }
+    return { messages: toolExecutionResults };
+}
 
 const memoryFilePath = 'eira_mid_term_memory.json';
 
@@ -24,53 +53,104 @@ async function main() {
 
   console.log('\nEira is ready. You can start the conversation. Type \'exit\' to end.\n');
 
-  let nextUserInput = await rl.question('Marius: ');
+  while (true) { // Main loop now runs indefinitely until explicitly exited
+    let nextUserInput = await rl.question('Marius: ');
+    if (nextUserInput.toLowerCase() === 'exit') {
+        break; // Exit the loop if user types 'exit'
+    }
 
-  while (nextUserInput.toLowerCase() !== 'exit') {
     console.log('Eira is thinking...');
 
     try {
-      // The `run` method now takes the full history, not just the new input
-      const finalState = await eira.run(nextUserInput, chatHistory);
+      let currentState: AgentState = {
+        messages: [...chatHistory, new HumanMessage(nextUserInput)],
+        retries: 0,
+      };
       
-      // The result from the agent run is the new, complete history
-      chatHistory = finalState; 
-      await saveMemory(memoryFilePath, chatHistory);
+      let finalTurnState: AgentState | null = null;
 
-      const lastMessage = chatHistory[chatHistory.length - 1];
+      while (true) {
+        const result = await eira.invoke(currentState);
+        finalTurnState = result;
 
-      // *** CRITICAL CHANGE: Check for the human-in-the-loop signal ***
-      if (
-        lastMessage instanceof AIMessage &&
-        lastMessage.tool_calls?.some(call => call.name === 'askHumanForHelpTool')
-      ) {
-        // The agent's main content already includes the question.
-        // We just need to display it and then prompt for the next input.
-        const eiraResponseContent = typeof lastMessage.content === 'string'
-          ? lastMessage.content.trim()
-          : JSON.stringify(lastMessage.content, null, 2);
-        console.log(`\nEira: ${eiraResponseContent}\n`);
+        const lastMessage = result.messages[result.messages.length - 1];
 
-        // The loop will now prompt for the next turn.
-        nextUserInput = await rl.question('Marius: ');
+        if (lastMessage instanceof AIMessage && lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
+          const humanToolCall = lastMessage.tool_calls.find(
+            (tc) => tc.name === 'askHumanForHelpTool' || tc.name === 'humanConfirmationTool'
+          );
 
-      } else {
-        // This is a normal turn where the agent finished its thought.
-        const eiraResponseContent = lastMessage?.content ?? '[Eira took an action without speaking]';
-        console.log(`\nEira: ${eiraResponseContent}\n`);
+          if (humanToolCall) {
+            const question = humanToolCall.args.question || humanToolCall.args.planSummary || 'Awaiting your input...';
+            console.log(`\nEira: ${question}`);
+            const humanResponse = await rl.question('Marius: ');
+            
+            if (humanResponse.toLowerCase() === 'exit') {
+                // Allow exiting even when responding to a tool call
+                finalTurnState = null; // Prevent saving this partial state
+                break;
+            }
+
+            currentState = {
+                messages: [
+                    ...result.messages, 
+                    new ToolMessage({
+                        tool_call_id: humanToolCall.id!,
+                        content: humanResponse,
+                    })
+                ],
+                retries: result.retries || 0,
+            };
+            continue;
+          } else {
+            console.log(`\nEira is using a tool: ${lastMessage.tool_calls.map(tc => tc.name).join(', ')}`);
+            const toolResults = await toolExecutorNode(result);
+            currentState = {
+                messages: [...result.messages, ...toolResults.messages],
+                retries: result.retries || 0,
+            };
+            continue;
+          }
+        }
         
-        // Prompt for the next turn
-        nextUserInput = await rl.question('Marius: ');
+        if (lastMessage instanceof AIMessage && lastMessage.content) {
+            let textToPrint = '';
+            if (Array.isArray(lastMessage.content)) {
+              textToPrint = lastMessage.content
+                .filter(part => part.type === 'text' && typeof part.text === 'string')
+                .map(part => (part as { text: string }).text)
+                .join('');
+            } else {
+              textToPrint = lastMessage.content;
+            }
+
+            if (textToPrint.trim()) {
+              console.log(`\nEira: ${textToPrint}`);
+            }
+        }
+        break; 
+      }
+
+      if (finalTurnState) {
+        chatHistory = finalTurnState.messages;
+        await saveMemory(memoryFilePath, chatHistory);
+      } else {
+        // This handles the case where we broke out of the inner loop due to 'exit'
+        break;
       }
 
     } catch (error) {
-      console.error('\nError during agent execution:', error);
-      nextUserInput = await rl.question('An error occurred. Please try again or type \'exit\'.\nMarius: ');
+        console.error('\nAn error occurred in the agent execution loop:', error);
+        const recoveryInput = await rl.question('Please try again or type \'exit\'.\nMarius: ');
+        if (recoveryInput.toLowerCase() === 'exit') {
+            break;
+        }
     }
   }
 
-  console.log('\nEira: Session concluded.');
+  console.log('\nEira: Session concluded. Exiting now.');
   rl.close();
+  process.exit(0); // Explicitly exit the process
 }
 
 main().catch(err => {
